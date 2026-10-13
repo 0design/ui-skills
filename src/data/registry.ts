@@ -5258,7 +5258,7 @@ const registrySource: RegistrySourceSkill[] = [
     name: "component-canvas",
     topics: ["systems", "interaction", "frontend"],
     description:
-      "Build or review a pan-and-zoom canvas of existing live UI components, in titled, non-draggable groups with dashed outlines. Use when the user asks for a component canvas, design-system workspace, or variant comparison of live components.",
+      "Build a full-screen, interactive canvas to explore existing UI components and their variants with pan and zoom.",
   },
 ];
 

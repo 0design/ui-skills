@@ -1,97 +1,123 @@
 ---
 name: component-canvas
-description: Build or review a pan-and-zoom canvas of existing live UI components, in titled, non-draggable groups with dashed outlines. Use when the user asks for a "component canvas", "design-system workspace", or "variant comparison" of live components. Not for galleries, dashboards, or drawing canvases.
+description: Build a full-screen, interactive canvas to explore existing UI components and their variants with pan and zoom.
 ---
 
 # Component canvas
 
-The canvas wraps components. It never changes them.
+Build a canvas that shows the project's existing components as they really behave. The canvas wraps components. It never changes them.
 
-## Rules
+## Ground rules
 
-- Never edit component source, exports, styles, hooks, or behaviour. Components must not import canvas code.
-- Never patch libraries, browser APIs, component DOM, or portal roots.
-- Ask before adding components, dependencies, or a public route. Otherwise choose defaults and report them.
-- Keep existing access controls. Leave unrelated work alone.
-- Follow the repo's command, browser, and edit restrictions. If a check is forbidden, report it as not run and ask once how to proceed. Never skip it silently.
-- Do not commit unless the user asks.
+- Do not modify component source, exports, styles, hooks, or behavior to make the canvas work. Components must not import or depend on canvas code.
+- Do not patch libraries, browser APIs, rendered component DOM, or portal roots.
+- Show only the components the user asked for. Adding components, installing dependencies, changing a component's design, or making the canvas public requires permission first.
+- Keep existing access controls.
+- Leave unrelated work alone. If removing an earlier canvas integration, undo only its changes to components.
+- Follow any restrictions on commands, browser access, dependencies, and edits.
 
-## Scope
+## Before building
 
-- "All" means every component file in the named folder. Each file is shown, or listed as omitted with a reason. Do not guess a folder: ask if it is unclear.
-- Put the canvas in one dev-only route in an existing app. Never in a published package. Gate it with the dev flag.
-- Build in order: one group with one component, then the other groups, then variants, then gestures and persistence. Pause after each step only if the user asked for that.
-- Add a coverage test: every component file is covered or omitted with a reason. It fails when a new file appears.
+Read the repository conventions, routes, component public APIs, design tokens, and test setup. Use the existing framework and libraries.
 
-## Samples
+Ask the user only when the answer changes what gets built or touches shared code: which components are in scope, whether a new dependency is acceptable, or whether a live service may be previewed. For everything else, choose a sensible default, state it in the report, and proceed.
 
-- Each sample is one variant or state. Hold everything else constant: same label, sample data, theme, and spacing.
-- Compare one prop at a time. Style comparisons vary `variant`. All other comparisons use the default style.
-- Use fixed demo data only. No services, no real writes, no production data or credentials.
-- Components that need a store or context: give them a stub provider with fixed data, or omit them with a reason. Never fake the component.
-- Keep each component's own disabled, checked, and focus styling. Test hover, focus and pressed states through real input.
-- Do not invent variants or generate every prop combination. List what was omitted and why.
+## Build order
+
+1. Add a minimal canvas route or entry point with one group and one component. Confirm it works.
+2. Add the remaining groups with sample data.
+3. Add variant comparisons, then advanced gestures and persistence, one feature at a time.
+
+Keep canvas code in one place. Check imports and package exports when moving files. Follow the project's language, validation, and test conventions. Do not add architectural layers or directory names the project does not already use.
+
+Keep layout and camera logic separate from sample data and component source.
 
 ## Layout
 
-- Plain background, with a theme the user can switch if the repo has a theme API. Default to the user's system theme.
-- Groups: a plain title above, then one dashed frame. Same border, padding and radius for every group.
-- Groups cannot be dragged. Measure real bounds, ignoring empty placeholders. Lay groups out so they never overlap.
+- Fill the viewport with a plain background.
+- If the project already supports light and dark themes, add an accessible toggle using its existing theme API. Apply the selected theme to the canvas and native portals. If theme support is absent, omit the toggle. Do not invent themes or change component styles.
+- Give every group the same padding, radius, and thin dashed border, subtle but visible in both themes. Use an existing muted color at roughly 25% opacity for borders. Place its plain title 8px above the border, using the muted text color without opacity.
+- Use wide groups with equal-width example slots filling each row. Wrap when needed and keep generous horizontal and vertical gaps within and between groups. Spread the layout without enlarging components.
+- Groups cannot be dragged. Their positions need not be hard-coded. Measure their actual bounds, including title, border, and padding. Ignore rendering-containment placeholders (empty boxes that reserve space before content renders), since they do not reflect real content size.
+- Omit background dots, decorative cards, page menus, instruction banners, selection tools, and block editing. Component cards and menus may appear as examples.
 
-## Interaction
+## Variants
 
-- Background drag pans and must not select text. Component previews keep native text selection.
-- A pan starts only on non-interactive space. Clicks, typing, focus, and nested scrolling inside previews stay native.
-- Floating menus and tooltips use `position: fixed`, which breaks under the canvas transform. Show them non-floating, or render them in a screen-space layer outside the transform. Otherwise list them as not covered.
-- Canvas keys (arrows, plus, minus) apply only when the viewport itself has focus.
-- Links to canvas groups move the camera. Links that leave the canvas open as normal.
-- No undo, redo, editing shortcuts, or history.
+- Show every supported named variant and useful state within the requested scope. Read the public APIs for styles, text and icon sizes, orientation, placement, alignment, modality, and collapse modes.
+- Include useful content and composition examples.
+- Do not invent variants or generate every prop combination. List what was omitted and why.
+- Compare one prop or feature at a time. Hold everything else constant: same wrapper, same sample data, same text, icons, theme, and spacing.
+- Change the style variant only in style comparisons. Size, state, placement, and other comparisons use a single style, usually the default.
 
-## Touch
+Example: in a size comparison, every button reads "Continue" and uses `variant="default"`. Only `size` changes. The style comparison changes `variant` and keeps size and text the same.
 
-- Default: the background pans with one finger and does not pinch. Previews keep native touch. Report that pinch is not supported.
-- Use `touch-action: none` on the background only if the user asks for pinch. Never apply it to interactive content.
+- Keep the component's own state styling (disabled opacity, checked color). Examples respond to input unless they show a disabled or read-only state.
+- Test hover, focus, and pressed states through real pointer and keyboard input, not added classes.
+- For portal examples, use the same trigger each time. Do not force several modals open at once.
+- Keep a variant list and coverage tests. Use types if the project supports them.
+- If a component cannot show a responsive or visual case, explain the limit. Do not change the component to fake it.
+
+## Interactions
+
+- Clicks, text selection, typing, button and switch activation, focus, and nested scrolling must keep working.
+- Canvas shortcuts (Space, arrows, Escape, native undo) apply to the canvas shell only. They must not take those keys away from preview controls.
+- Handle preview navigation in the canvas host. Links to canvas groups move the camera instead of scrolling the page. Define what happens to links that leave the canvas, including links inside portals. Do not change component links or router internals.
+- Portals stay in their native roots at screen-space size. Let the library handle positioning and modal focus. Use public container options only when needed. Check positioning and clickable areas under canvas transforms. If they break, report it or propose a separate preview document. Do not patch components.
+- The canvas has no undo/redo, editing shortcuts, or history.
+
+## Safety for previews
+
+Make each preview safe before it mounts:
+
+- Use providers with test data, mock services, or existing callback props to block live calls and real writes.
+- Static demo assets and local fixtures are fine.
+- Never use production credentials or data.
+- If safe isolation is not available, omit the live example and explain why. A separate document alone does not make a preview safe.
 
 ## Camera
 
-- Mouse and trackpad: pan, and zoom about the cursor. Touch: pan, per the Touch default.
-- Clamp zoom and offsets. Apply transforms at most once per frame.
-- Handle pointer count changes, cancel, lost capture, window blur, and hidden tabs. Release captures and remove listeners, observers, timers and frames on teardown.
-- Fit once after layout and fonts settle. Fit never moves groups. Resizing does not move the camera.
-- Focus outside the view moves the camera to reveal it. Page scroll never moves the canvas.
-- Fit-all and reset are icon buttons with accessible names, outside the transform, always reachable.
+- Mouse and trackpad: pan, and zoom around the cursor. Touch: pan and pinch.
+- Start ordinary pan on empty canvas space. Keep native gestures inside previews and portals.
+- Do not cancel events broadly, and do not put `touch-action: none` on interactive content.
+- Handle pointer count changes, cancellation, lost capture, window blur, and hidden tabs. Release captures and clean up listeners, observers, timers, and animation frames on teardown.
+- Apply gesture transforms at most once per animation frame. Avoid alternating layout reads and writes.
+- Prevent group overlap when content expands or the viewport resizes. Avoid layout loops and unnecessary movement. Fit after layout settles. Fitting never rearranges groups.
+- Move the camera to reveal keyboard focus outside the visible area. Native page scrolling must not move the canvas.
+- Keyboard camera navigation works, with visible focus on canvas controls.
+- Provide fit-all and reset icon buttons with accessible names. Keep them reachable even when the view is lost.
+- Validate camera values and keep them within bounds.
 
 ## Persistence
 
-- Save the camera only, versioned, under a key per workspace.
-- Reject malformed, oversized, or unknown-version data and fall back to defaults. Catch storage errors on every read and write.
-- Automatic first fit is not saved. Only the user's own moves are.
-- Reset restores the camera only. It keeps preview state and drafts.
-
-## Tests
-
-- Put tests where the repo runs them. If the app has no runner, run through the package's runner. Do not add a dependency without asking.
-- Test pure camera maths, storage failure paths, and the coverage rule.
+- Save only the camera, in a versioned format, under a storage key per project or workspace.
+- Handle malformed or oversized data, unavailable storage, and quota errors.
+- Migrate known older formats. For unknown formats, use safe defaults and discard old group positions and history.
+- Reset restores the camera only. It does not clear preview state or drafts.
 
 ## Checks
 
-Report each check as passed, failed, or not run. Browser checks: console clean, samples render, focus and keyboard work, nested scroll and portals work at several zooms, pan survives cancel, groups do not overlap, camera persists across reload, text selection behaves as in Interaction.
+Run the repository's checks when allowed. Then, in the browser, confirm:
+
+- The route mounts, imports and exports resolve, and the console shows no errors.
+- Component source is unchanged.
+- Listed variants appear, omissions are explained, groups have dashed borders, and non-style comparisons use one style.
+- Keyboard camera navigation and visible focus work. Preview controls keep their native shortcuts and gestures.
+- Nested scrolling, portal positioning, clickable areas, and modal focus work at several zoom levels and viewport sizes.
+- Pan and pinch survive pointer changes and cancellation. Teardown releases resources.
+- Groups do not overlap after expansion or resize. Fit works, and offscreen focus reveals correctly.
+- Camera persists across reload. A storage failure falls back safely. Reset keeps preview drafts. Drafts need not survive reload unless requested.
+- Groups cannot be dragged. The canvas has no undo/redo.
+- Previews use safe test data and make no real project or account writes.
+
+A check counts as passing only if it was run. If a check was skipped, say so.
 
 ## Report
 
-End with these headings:
+End every build or review with these headings:
 
-- **Changed:** files, and what changed in each. Note any component change (there should be none).
+- **Changed:** files and what changed in each. Note any component changes (there should be none).
 - **Checks run:** each check and its result.
-- **Not working or not tested:** gaps, omitted items and why, anything unverified.
+- **Not working or not tested:** known gaps, omitted variants and why, and anything unverified.
 - **Decisions made:** defaults chosen without asking.
 
-Do not call the canvas verified or ready unless every check passed.
-
-## Repo notes
-
-Applies to this repo only. Other repos: replace these with their own equivalents.
-
-- Theme: the `data-theme` value on the mesurer root, `system`, `light` or `dark`. Default is `system`, not black or white.
-- Text selection: the viewport has `user-select: none`. Previews have `user-select: text`.
-- Pinch: not supported by default (see Touch).
+Do not describe the implementation as verified or the template as ready unless every check above passed.
