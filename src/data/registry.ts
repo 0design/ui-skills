@@ -5247,6 +5247,19 @@ const registrySource: RegistrySourceSkill[] = [
     description:
       "Review Archify issues, PRs, or code through value, cost, and impact to support evidence-based maintenance decisions. Use for issue triage, change reviews, and code quality assessments.",
   },
+  {
+    slug: "component-canvas",
+    user: "ibelick",
+    repo: "ui-skills",
+    rawUrl:
+      "https://raw.githubusercontent.com/ibelick/ui-skills/main/skills/component-canvas/SKILL.md",
+    githubUrl:
+      "https://github.com/ibelick/ui-skills/blob/main/skills/component-canvas/SKILL.md",
+    name: "component-canvas",
+    topics: ["systems", "interaction", "frontend"],
+    description:
+      "Build or review a pan-and-zoom canvas of existing live UI components, in titled, non-draggable groups with dashed outlines. Use when the user asks for a component canvas, design-system workspace, or variant comparison of live components.",
+  },
 ];
 
 const buildInitialPathSlug = (entry: RegistrySourceSkill) => {
