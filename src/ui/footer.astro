@@ -1,12 +1,28 @@
 ---
-import { topics } from "../data/topics";
+import { topicBySlug } from "../data/topics";
+import type { TopicSlug } from "../data/registry";
 import { agents } from "../data/agents";
 import { playbook } from "../data/playbook";
 import { collections } from "../data/collections";
 
 const currentYear = new Date().getFullYear();
-const coreTopics = topics.filter((topic) => topic.isDesignCore);
-const featuredTopics = coreTopics.slice(0, 6);
+const footerTopicSlugs: TopicSlug[] = [
+  "accessibility",
+  "motion",
+  "systems",
+  "visual",
+  "interaction",
+  "performance",
+  "craft",
+  "typography",
+  "frontend",
+  "frameworks",
+  "shadcn-ui-development",
+  "testing",
+];
+const featuredTopics = footerTopicSlugs
+  .map((slug) => topicBySlug.get(slug))
+  .filter((topic): topic is NonNullable<typeof topic> => Boolean(topic));
 const featuredAgentIds = [
   "claude-code",
   "cursor",
@@ -27,6 +43,10 @@ const footerCollectionSlugs = [
   "button-design",
   "form-design",
   "videos",
+  "design-engineering",
+  "web-development-best-practices",
+  "design-system-guidelines",
+  "dashboard-ui",
 ];
 const collectionBySlug = new Map(
   collections.map((collection) => [collection.slug, collection]),
@@ -74,14 +94,18 @@ const footerSections: FooterSection[] = [
         label: topic.label,
         href: `/skills/${topic.slug}`,
       })),
+      { label: "All topics", href: "/skills/topics" },
     ],
   },
   {
     title: "Collections",
-    links: footerCollections.map((collection) => ({
-      label: collection.title,
-      href: `/collections/${collection.slug}`,
-    })),
+    links: [
+      ...footerCollections.map((collection) => ({
+        label: collection.title,
+        href: `/collections/${collection.slug}`,
+      })),
+      { label: "All collections", href: "/collections" },
+    ],
   },
   {
     title: "Agents",

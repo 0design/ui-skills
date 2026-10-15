@@ -31,6 +31,7 @@ export type TopicSlug =
   | "frontend"
   | "architecture"
   | "frameworks"
+  | "shadcn-ui-development"
   | "testing"
   | "debugging"
   | "code-quality"
@@ -536,7 +537,7 @@ const registrySource: RegistrySourceSkill[] = [
     githubUrl:
       "https://github.com/vercel/next.js/blob/canary/skills/next-cache-components-adoption/SKILL.md",
     name: "next-cache-components",
-    topics: ["nextjs", "performance", "frontend"],
+    topics: ["nextjs", "performance", "frontend", "frameworks"],
     description:
       "Enable Cache Components in a Next.js app and resolve blocking routes surfaced during adoption.",
   },
@@ -550,7 +551,7 @@ const registrySource: RegistrySourceSkill[] = [
       "https://github.com/vercel/next.js/blob/canary/skills/next-cache-components-optimizer/SKILL.md",
     files: ["rig-template.md", "test-template.md"],
     name: "next-cache-components-optimizer",
-    topics: ["nextjs", "performance", "testing"],
+    topics: ["nextjs", "performance", "testing", "frameworks"],
     description:
       "Drive a Next.js route to instant navigation under Cache Components using a failing Playwright test and an agentic fix loop.",
   },
@@ -590,7 +591,7 @@ const registrySource: RegistrySourceSkill[] = [
       "https://github.com/vercel-labs/agent-skills/blob/main/skills/react-best-practices/SKILL.md",
     files: ["AGENTS.md"],
     name: "vercel-react-best-practices",
-    topics: ["frontend", "performance", "systems"],
+    topics: ["frontend", "performance", "systems", "frameworks"],
     description:
       "Vercel React best practices for rendering performance, bundle efficiency, and scalable component architecture.",
   },
@@ -603,7 +604,7 @@ const registrySource: RegistrySourceSkill[] = [
     githubUrl:
       "https://github.com/remix-run/agent-skills/blob/main/skills/react-router-framework-mode/SKILL.md",
     name: "react-router-framework-mode",
-    topics: ["frontend", "architecture", "interaction"],
+    topics: ["frontend", "architecture", "interaction", "frameworks"],
     description:
       "React Router framework-mode patterns for loaders, actions, middleware, route modules, and full-stack rendering flows.",
   },
@@ -917,7 +918,7 @@ const registrySource: RegistrySourceSkill[] = [
     githubUrl: "https://github.com/antfu/skills/blob/main/skills/nuxt/SKILL.md",
     files: ["GENERATION.md"],
     name: "nuxt",
-    topics: ["nuxt", "frontend", "performance"],
+    topics: ["nuxt", "frontend", "performance", "frameworks"],
     description:
       "Nuxt full-stack Vue framework guidance for SSR, auto-imports, file-based routing, and server routes.",
   },
@@ -1581,7 +1582,7 @@ const registrySource: RegistrySourceSkill[] = [
       "https://github.com/shadcn-ui/ui/blob/main/skills/shadcn/SKILL.md",
     files: ["cli.md", "customization.md", "design-system-page.md", "design-system.md", "mcp.md", "registry.md"],
     name: "shadcn",
-    topics: ["systems", "tooling", "frontend"],
+    topics: ["systems", "tooling", "frontend", "shadcn-ui-development"],
     description:
       "Project-aware shadcn/ui workflow for searching, adding, composing, and fixing components with correct patterns.",
   },
@@ -3637,7 +3638,7 @@ const registrySource: RegistrySourceSkill[] = [
     githubUrl:
       "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/.claude/skills/ui-styling/SKILL.md",
     name: "ui-styling",
-    topics: ["visual", "systems", "frontend"],
+    topics: ["visual", "systems", "frontend", "shadcn-ui-development"],
     description:
       "Create beautiful, accessible user interfaces with shadcn/ui components (built on Radix UI + Tailwind), Tailwind CSS utility-first styling, and canvas-based visual designs. Use when building user interfaces, implementing design systems, creating responsive layouts, adding accessible components (dialogs, dropdowns, forms, tables), customizing themes and colors, implementing dark mode, generating visual designs and posters, or establishing consistent styling patterns across applications.",
   },
@@ -3729,7 +3730,7 @@ const registrySource: RegistrySourceSkill[] = [
     githubUrl:
       "https://github.com/millionco/skills/blob/main/skills/paper-to-code-components/SKILL.md",
     name: "paper-to-code-components",
-    topics: ["systems", "frontend", "visual"],
+    topics: ["systems", "frontend", "visual", "shadcn-ui-development"],
     description:
       "Use when implementing Paper MCP, Paper-to-code, design-to-code, Viewfinder, or Paper-exported JSX in React/Next.js apps with component candidates, tokens, and shadcn reuse.",
   },
@@ -3822,7 +3823,7 @@ const registrySource: RegistrySourceSkill[] = [
       "https://github.com/shadcn-ui/ui/blob/main/skills/migrate-radix-to-base/SKILL.md",
     files: ["class-mapping.md", "consumer-props.md", "disclosure.md", "display-misc.md", "form-controls.md", "menus.md", "overlays.md", "universal-patterns.md", "wrapper-shapes.md"],
     name: "migrate-radix-to-base",
-    topics: ["systems", "frontend", "tooling"],
+    topics: ["systems", "frontend", "tooling", "shadcn-ui-development"],
     description:
       "Migrate React projects and shadcn components from Radix UI to Base UI, handling route objects, consumer props, and progressive wrapper migration.",
   },
