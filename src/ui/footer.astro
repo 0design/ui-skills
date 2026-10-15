@@ -4,6 +4,7 @@ import type { TopicSlug } from "../data/registry";
 import { agents } from "../data/agents";
 import { playbook } from "../data/playbook";
 import { collections } from "../data/collections";
+import { skills } from "../data/skills";
 
 const currentYear = new Date().getFullYear();
 const footerTopicSlugs: TopicSlug[] = [
@@ -29,11 +30,53 @@ const featuredAgentIds = [
   "openclaw",
   "codex",
   "github-copilot",
+  "opencode",
+  "gemini",
+  "windsurf",
+  "cline",
+  "antigravity",
+  "amp",
+  "zed",
 ];
 const featuredAgents = featuredAgentIds
   .map((id) => agents.find((agent) => agent.id === id))
   .filter((agent): agent is NonNullable<typeof agent> => Boolean(agent));
-const featuredPlaybook = playbook.slice(0, 6);
+const footerPlaybookSlugs = [
+  "reserve-space-with-aspect-ratio",
+  "use-text-balance",
+  "use-tabular-nums-for-data",
+  "use-large-touch-targets",
+  "use-concentric-border-radius",
+  "add-scale-on-press",
+  "show-visible-focus-rings",
+  "label-every-form-field",
+  "show-errors-beside-fields",
+  "use-structural-skeletons",
+  "give-empty-states-one-action",
+  "use-interruptible-transitions",
+];
+const playbookBySlug = new Map(playbook.map((entry) => [entry.slug, entry]));
+const featuredPlaybook = footerPlaybookSlugs
+  .map((slug) => playbookBySlug.get(slug))
+  .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
+const footerSkillPaths = [
+  "ibelick/ui-skills-root",
+  "ibelick/improve-ui",
+  "ibelick/create-design-md",
+  "nextlevelbuilder/ui-ux-pro-max",
+  "0xdesign/design-lab",
+  "emilkowalski/improve-animations",
+  "jakubkrehel/make-interfaces-feel-better",
+  "anthropics/frontend-design",
+  "ibelick/baseline-ui",
+  "shadcn-ui/shadcn",
+  "addyosmani/web-quality-audit",
+  "pbakaus/impeccable",
+];
+const skillByPath = new Map(skills.map((skill) => [skill.pathSlug, skill]));
+const featuredSkills = footerSkillPaths
+  .map((path) => skillByPath.get(path))
+  .filter((skill): skill is NonNullable<typeof skill> => Boolean(skill));
 const footerCollectionSlugs = [
   "mobile-app-design",
   "website-layout",
@@ -120,31 +163,11 @@ const footerSections: FooterSection[] = [
   {
     title: "Best skills",
     links: [
-      {
-        label: "UI Skills Root",
-        href: "/skills/ibelick/ui-skills-root",
-      },
-      {
-        label: "Improve UI",
-        href: "/skills/ibelick/improve-ui",
-      },
-      {
-        label: "Create Design MD",
-        href: "/skills/ibelick/create-design-md",
-      },
-      {
-        label: "UI/UX Pro Max",
-        href: "/skills/nextlevelbuilder/ui-ux-pro-max",
-      },
-      { label: "Design Lab", href: "/skills/0xdesign/design-lab" },
-      {
-        label: "Improve Animations",
-        href: "/skills/emilkowalski/improve-animations",
-      },
-      {
-        label: "Make Interfaces Feel Better",
-        href: "/skills/jakubkrehel/make-interfaces-feel-better",
-      },
+      ...featuredSkills.map((skill) => ({
+        label: skill.label,
+        href: `/skills/${skill.pathSlug}`,
+      })),
+      { label: "All skills", href: "/skills" },
     ],
   },
   {
