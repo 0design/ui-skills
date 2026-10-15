@@ -5260,6 +5260,139 @@ const registrySource: RegistrySourceSkill[] = [
     description:
       "Build a full-screen, interactive canvas to explore existing UI components and their variants with pan and zoom.",
   },
+  {
+    slug: "hairline-adopt",
+    user: "lucasmarkes",
+    repo: "hairline",
+    rawUrl:
+      "https://raw.githubusercontent.com/lucasmarkes/hairline/main/skills/hairline-adopt/SKILL.md",
+    githubUrl:
+      "https://github.com/lucasmarkes/hairline/blob/main/skills/hairline-adopt/SKILL.md",
+    name: "hairline-adopt",
+    topics: ["visual", "interaction", "craft", "frontend"],
+    description:
+      "Use when someone has an SVG (an icon, a logo, an illustration) and wants it as a Hairline figure, or runs /hairline-adopt with a file. Reads the drawing, rebuilds its object as an isometric line figure on the engine of @lucasmarkes/hairline, and gives it a gesture that answers the pointer.",
+  },
+  {
+    slug: "cinematic-shot",
+    user: "1weiho",
+    repo: "cinematic-shot",
+    rawUrl:
+      "https://raw.githubusercontent.com/1weiho/cinematic-shot/main/skills/cinematic-shot/SKILL.md",
+    githubUrl:
+      "https://github.com/1weiho/cinematic-shot/blob/main/skills/cinematic-shot/SKILL.md",
+    files: [
+      "references/look.md",
+      "references/shot-list-example.md",
+    ],
+    name: "cinematic-shot",
+    topics: ["video", "visual", "craft"],
+    description:
+      "Shoot software UI like a film. A sequence of hero shots, each a steep, oblique, extreme close-up of the interface floating in black, with a razor-thin focal plane, a slow motivated camera drift, and UI that acts on its own, hard-cut on the action, ending on one line of copy and a still logo. Use when asked for a launch video, product film, feature trailer, teaser, promo clip, hero shot, or any \"cinematic\" footage of an app or UI. This skill covers camera, framing, light, and edit. It is stack-agnostic.",
+  },
+  {
+    slug: "feel",
+    user: "diip3sh",
+    repo: "feel",
+    rawUrl:
+      "https://raw.githubusercontent.com/diip3sh/feel/main/SKILL.md",
+    githubUrl:
+      "https://github.com/diip3sh/feel/blob/main/SKILL.md",
+    name: "feel",
+    topics: ["motion", "interaction", "frontend", "craft"],
+    description:
+      "Build UI interactions whose motion comes from a physical model instead of durations and easing curves. Turn a feel described in words (\"a toggle that feels heavy\", \"a drawer with a magnetic snap\", \"a card you throw into a corner\", \"a knob with heavy detents\", \"a sticky slider\") into a production component driven by mass, stiffness, damping and force fields (magnets, friction, walls), on a line, in a plane or around a dial, plus a test rig that plots position, velocity and the force field, overlays the model's prediction on the measured motion, and exports the same spring to Framer Motion, react-spring, SwiftUI, Compose or CSS linear(). Use this whenever someone asks for an animation, transition, spring, gesture, drag, flick, snap points, bottom sheet, toggle, slider, carousel or any micro-interaction that should \"feel\" a certain way, or wants to tune or explain a spring, even if they never say \"physics\".",
+  },
+  {
+    slug: "regards-art-direction",
+    user: "filipwojda",
+    repo: "regards-skill",
+    rawUrl:
+      "https://raw.githubusercontent.com/filipwojda/regards-skill/main/skills/regards-art-direction/SKILL.md",
+    githubUrl:
+      "https://github.com/filipwojda/regards-skill/blob/main/skills/regards-art-direction/SKILL.md",
+    name: "regards-art-direction",
+    topics: ["taste", "visual", "craft", "frontend"],
+    description:
+      "Art direction for websites from live research on regards.design, a hand-picked index of real website sections searchable by look. A fork of tasteskill v2 (MIT, Leonxlnx) that keeps its inventory, idea test, open-collection pictures, real-browser inspector and look-and-fix loop, and replaces the deal of 20 fixed directions with a search of real sections for this one brief. Use it whenever you design, redesign, restyle, polish or review a landing page, marketing site, portfolio, product page, one-pager, hero or any public-facing web page, in any stack, and when the user says a page looks generic, templated, \"AI-made\" or like every other site. Needs the regards.design MCP server for the research step. Not for dashboards or app screens.",
+  },
+  {
+    slug: "anatomy-asset",
+    user: "Teddarific",
+    repo: "skills",
+    rawUrl:
+      "https://raw.githubusercontent.com/Teddarific/skills/main/skills/anatomy-asset/SKILL.md",
+    githubUrl:
+      "https://github.com/Teddarific/skills/blob/main/skills/anatomy-asset/SKILL.md",
+    files: [
+      "references/concepts.md",
+      "references/craft.md",
+      "references/composition.md",
+      "references/brand.md",
+      "references/export.md",
+      "references/verify.md",
+      "references/motion.md",
+      "references/webgl.md",
+      "references/3d.md",
+      "references/react.md",
+    ],
+    name: "anatomy-asset",
+    topics: ["visual", "craft", "motion", "frontend"],
+    description:
+      "Make crafted, highly detailed isometric SVG assets for landing pages, product sites, launch posts, social cards and decks — a hero object, a set of spot illustrations, a feature-tile scene — drawn as real, well-made physical things with many small precise solid parts, four-tone shading, correct painter's order and calm CSS-only ambient motion, mostly monochrome with brand accents. Use this when someone wants a nice-looking illustration, hero image, product visual, spot illustration, icon set, isometric artwork, \"Linear-style\" or \"premium\" drawing, or a visual for a section of a site, where the goal is a striking, on-brand picture rather than a diagram that explains how something works. Ships a standalone .svg that works as <img>, inline or in design tools, plus a preview page; can add WebGL shaders or the 3D mode when asked. For interactive figures that explain a technical concept with a live readout, use the anatomy skill instead.",
+  },
+  {
+    slug: "technical-drawing",
+    user: "jakubkrehel",
+    repo: "skills",
+    rawUrl:
+      "https://raw.githubusercontent.com/jakubkrehel/skills/main/skills/technical-drawing/SKILL.md",
+    githubUrl:
+      "https://github.com/jakubkrehel/skills/blob/main/skills/technical-drawing/SKILL.md",
+    name: "technical-drawing",
+    topics: ["visual", "craft", "3d"],
+    description:
+      "Creates precise static technical drawings of physical objects, with coherent views and fine linework. Delivers a blank-page viewer with zoom, editable colors and SVG, PNG and PDF downloads.",
+  },
+  {
+    slug: "animation-performance",
+    user: "emilkowalski",
+    repo: "skills",
+    rawUrl:
+      "https://raw.githubusercontent.com/emilkowalski/skills/main/skills/animation-performance/SKILL.md",
+    githubUrl:
+      "https://github.com/emilkowalski/skills/blob/main/skills/animation-performance/SKILL.md",
+    name: "animation-performance",
+    topics: ["motion", "performance", "frontend"],
+    description:
+      "Keep web animations inside the frame budget — animate composite-only properties, keep motion off the main thread when the page is busy, and find the cause when an animation drops frames. Covers the layout/paint/composite pipeline, cheaper property swaps, CSS vs WAAPI vs requestAnimationFrame, Framer Motion's hardware-accelerated path, React re-rendering per frame, inherited CSS variable recalculation, blur cost, and when `will-change` actually helps. Use when an animation is janky, choppy, stutters, or drops frames; when choosing which property to animate; when deciding between CSS and JS animation on performance grounds; or when reaching for `will-change` or GPU layers. For choosing easing, duration, or whether to animate at all use animate; for reviewing motion as a whole use review-animations.",
+  },
+  {
+    slug: "quartz",
+    user: "arla6ka",
+    repo: "skills",
+    rawUrl:
+      "https://raw.githubusercontent.com/arla6ka/skills/main/systems/quartz/SKILL.md",
+    githubUrl:
+      "https://github.com/arla6ka/skills/blob/main/systems/quartz/SKILL.md",
+    name: "quartz",
+    topics: ["systems", "visual", "frontend"],
+    description:
+      "Quartz design system rules for this project's UI. Use when building or changing any screen, component, form or style, when porting an existing screen onto Quartz, or when checking UI against Quartz.",
+  },
+  {
+    slug: "lime",
+    user: "arla6ka",
+    repo: "skills",
+    rawUrl:
+      "https://raw.githubusercontent.com/arla6ka/skills/main/systems/lime/SKILL.md",
+    githubUrl:
+      "https://github.com/arla6ka/skills/blob/main/systems/lime/SKILL.md",
+    name: "lime",
+    topics: ["systems", "visual", "frontend"],
+    description:
+      "Lime design system rules for this project's UI. Use when building or changing any screen, component, form or style, when porting an existing screen onto Lime, or when checking UI against Lime.",
+  },
 ];
 
 const buildInitialPathSlug = (entry: RegistrySourceSkill) => {
