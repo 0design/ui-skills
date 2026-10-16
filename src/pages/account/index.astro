@@ -1,0 +1,112 @@
+---
+import { env } from "cloudflare:workers";
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../ui/button.astro";
+import Breadcrumbs from "../../ui/breadcrumbs.astro";
+import { getAuth, getPageSession } from "../../lib/auth";
+import { authProviders } from "../../lib/auth-config";
+
+export const prerender = false;
+
+const auth = getAuth(env);
+if (!auth) return Astro.redirect("/login");
+const session = await getPageSession(
+  auth,
+  Astro.request.headers,
+  Astro.response.headers,
+);
+if (!session) return Astro.redirect("/login");
+const accounts = await auth.api.listUserAccounts({
+  headers: Astro.request.headers,
+});
+const linkedProviders = new Set(accounts.map((account) => account.providerId));
+---
+
+<Layout
+  title="Account | UI Skills"
+  description="Manage your UI Skills account."
+  robots="noindex,nofollow"
+  showNewsletter={false}
+>
+  <div class="container-3xl pt-20 pb-10">
+    <div class="flex max-w-lg flex-col gap-10">
+      <Breadcrumbs
+        items={[{ label: "Explore", href: "/" }, { label: "Account" }]}
+      />
+      <div class="flex flex-col gap-3">
+        <h1 class="type-h1 text-content-primary">Your account</h1>
+        <p class="type-body-md text-content-primary">{session.user.name}</p>
+        <p class="type-body-md text-content-secondary break-words">
+          {session.user.email}
+        </p>
+      </div>
+      <section class="flex flex-col gap-4" aria-labelledby="providers-title">
+        <h2
+          id="providers-title"
+          class="text-content-primary text-lg font-medium"
+        >
+          Connected accounts
+        </h2>
+        <div class="flex flex-col gap-3" data-account-actions>
+          {
+            authProviders
+              .filter((provider) => auth.options.socialProviders[provider.id])
+              .map((provider) =>
+                linkedProviders.has(provider.id) ? (
+                  <p class="type-body-md text-content-secondary">
+                    {provider.name} connected
+                  </p>
+                ) : (
+                  <Button
+                    variant="secondary"
+                    data-connect-provider={provider.id}
+                  >
+                    Connect {provider.name}
+                  </Button>
+                ),
+              )
+          }
+          <p
+            class="type-body-md text-content-secondary"
+            role="alert"
+            data-auth-error
+            hidden={!Astro.url.searchParams.has("error")}
+          >
+            Could not connect that account. Try again or use your existing
+            sign-in method.
+          </p>
+          <div class="mt-4">
+            <Button variant="secondary" data-sign-out>Sign out</Button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { authClient } from "../../lib/auth-client";
+  import { bindAuthActions } from "../../lib/auth-actions";
+
+  const actions = document.querySelector<HTMLElement>("[data-account-actions]");
+  bindAuthActions(
+    actions,
+    async (button) => {
+      if (button.hasAttribute("data-sign-out")) {
+        const result = await authClient.signOut();
+        if (result.error) throw new Error("Sign-out failed");
+        window.location.assign("/");
+      } else {
+        const provider = button.dataset.connectProvider;
+        if (provider !== "google" && provider !== "github") return;
+        const result = await authClient.linkSocial({
+          provider,
+          callbackURL: "/account",
+          errorCallbackURL: "/account?error=link_failed",
+        });
+        if (result.error) throw new Error("Connection failed");
+      }
+    },
+    "That action could not be completed. Please try again.",
+  );
+</script>
