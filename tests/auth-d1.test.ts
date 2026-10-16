@@ -4,7 +4,7 @@ import { test } from "node:test";
 import { betterAuth } from "better-auth";
 import { testUtils } from "better-auth/plugins";
 import { getPlatformProxy } from "wrangler";
-import { getAuth } from "../src/lib/auth.ts";
+import { getAuth, getPageSession } from "../src/lib/auth.ts";
 import type { AuthEnv } from "../src/lib/auth-config.ts";
 
 test("Better Auth sessions and OAuth state work against local D1", async (t) => {
@@ -49,6 +49,49 @@ test("Better Auth sessions and OAuth state work against local D1", async (t) => 
     assert.equal(session?.user.id, user.id);
     assert.equal(session?.user.email, "auth-test@example.com");
     assert.equal(await auth.api.getSession({ headers: new Headers() }), null);
+
+    await t.test(
+      "page session reads forward the renewed browser cookie",
+      async () => {
+        const login = await context.test.login({ userId: user.id });
+        const original = await auth.api.getSession({ headers: login.headers });
+        assert.ok(original);
+        const day = 24 * 60 * 60 * 1000;
+        const oldExpiry = Date.now() + 5 * day;
+        await db
+          .prepare(
+            "UPDATE auth_session SET expires_at = ?, updated_at = ? WHERE id = ?",
+          )
+          .bind(oldExpiry, Date.now() - 2 * day, original.session.id)
+          .run();
+
+        const pageHeaders = new Headers({
+          "Cache-Control": "private, no-store",
+        });
+        const renewed = await getPageSession(
+          configured,
+          login.headers,
+          pageHeaders,
+        );
+        assert.ok(renewed);
+        assert.equal(renewed.user.id, user.id);
+        assert.ok(renewed.session.expiresAt.getTime() > oldExpiry);
+        const cookies = pageHeaders.getSetCookie();
+        assert.ok(
+          cookies.some((cookie) =>
+            cookie.startsWith(`${context.authCookies.sessionToken.name}=`),
+          ),
+        );
+        assert.ok(cookies.some((cookie) => /max-age=604800/i.test(cookie)));
+        assert.equal(pageHeaders.get("Cache-Control"), "private, no-store");
+
+        const stored = await db
+          .prepare("SELECT expires_at FROM auth_session WHERE id = ?")
+          .bind(original.session.id)
+          .first<{ expires_at: number }>();
+        assert.equal(stored?.expires_at, renewed.session.expiresAt.getTime());
+      },
+    );
 
     await t.test("rejects tampered and expired sessions", async () => {
       const tampered = new Headers(headers);

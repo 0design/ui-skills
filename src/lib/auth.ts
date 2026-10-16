@@ -4,6 +4,22 @@ import { drizzle } from "drizzle-orm/d1";
 import * as schema from "../db/schema";
 import { getAuthConfig, type AuthEnv } from "./auth-config";
 
+/** Server-rendered pages must forward renewed cookies, not just read the session. */
+export async function getPageSession(
+  auth: NonNullable<ReturnType<typeof getAuth>>,
+  requestHeaders: Headers,
+  responseHeaders: Headers,
+) {
+  const { response: session, headers } = await auth.api.getSession({
+    headers: requestHeaders,
+    returnHeaders: true,
+  });
+  for (const cookie of headers.getSetCookie()) {
+    responseHeaders.append("Set-Cookie", cookie);
+  }
+  return session;
+}
+
 /** Request scoped: never retain a D1 binding between Worker requests. */
 export function getAuth(env: AuthEnv) {
   const config = getAuthConfig(env);

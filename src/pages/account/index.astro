@@ -3,14 +3,18 @@ import { env } from "cloudflare:workers";
 import Layout from "../../layouts/Layout.astro";
 import Button from "../../ui/button.astro";
 import Breadcrumbs from "../../ui/breadcrumbs.astro";
-import { getAuth } from "../../lib/auth";
+import { getAuth, getPageSession } from "../../lib/auth";
 import { authProviders } from "../../lib/auth-config";
 
 export const prerender = false;
 
 const auth = getAuth(env);
 if (!auth) return Astro.redirect("/login");
-const session = await auth.api.getSession({ headers: Astro.request.headers });
+const session = await getPageSession(
+  auth,
+  Astro.request.headers,
+  Astro.response.headers,
+);
 if (!session) return Astro.redirect("/login");
 const accounts = await auth.api.listUserAccounts({
   headers: Astro.request.headers,
