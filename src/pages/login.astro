@@ -76,14 +76,16 @@ const errorMessage =
             </Button>
           ))
         }
-        <p
-          class="text-content-secondary type-body-md text-center"
-          role="alert"
-          data-auth-error
-          hidden={!errorMessage}
-        >
-          {errorMessage}
-        </p>
+        <div class="min-h-6">
+          <p
+            class="text-content-secondary type-body-md text-center"
+            role="alert"
+            data-auth-error
+            hidden={!errorMessage}
+          >
+            {errorMessage}
+          </p>
+        </div>
         {
           !config && (
             <p class="text-content-secondary type-body-md text-center">

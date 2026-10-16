@@ -65,6 +65,8 @@ try {
   for (const [path, status] of [
     ["/login", 200],
     ["/account", 302],
+    ["/library", 302],
+    ["/api/library", 401],
     ["/api/auth/get-session", 200],
   ]) {
     const response = await fetchLocal(path, {
@@ -106,6 +108,20 @@ try {
     }
     if (path === "/account" && response.headers.get("location") !== "/login") {
       throw new Error("Anonymous account request did not redirect to login");
+    }
+    if (path === "/library") {
+      const location = response.headers.get("location") ?? "";
+      if (!location.startsWith("/login?returnTo=")) {
+        throw new Error(
+          "Anonymous library request did not redirect to login",
+        );
+      }
+    }
+    if (path === "/api/library") {
+      const body = await response.json();
+      if (body?.error !== "Sign in to use your library.") {
+        throw new Error("Anonymous library API did not require sign-in");
+      }
     }
     if (path === "/api/auth/get-session" && (await response.json()) !== null) {
       throw new Error("Anonymous request received a session");

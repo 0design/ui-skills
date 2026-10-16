@@ -1,10 +1,12 @@
 ---
 import { env } from "cloudflare:workers";
+import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import Layout from "../../layouts/Layout.astro";
 import Button from "../../ui/button.astro";
 import Breadcrumbs from "../../ui/breadcrumbs.astro";
 import { getAuth, getPageSession } from "../../lib/auth";
 import { authProviders } from "../../lib/auth-config";
+import { createLibraryStore } from "../../lib/library-store";
 
 export const prerender = false;
 
@@ -20,6 +22,19 @@ const accounts = await auth.api.listUserAccounts({
   headers: Astro.request.headers,
 });
 const linkedProviders = new Set(accounts.map((account) => account.providerId));
+const library = env.AUTH_DB
+  ? await createLibraryStore(env.AUTH_DB).snapshot(session.user.id)
+  : null;
+const savedCount = library?.savedSkillPaths.length ?? 0;
+const collectionCount = library?.collections.length ?? 0;
+const providers = authProviders.filter(
+  (provider) => auth.options.socialProviders[provider.id],
+);
+const name = session.user.name || session.user.email;
+const initial = name.trim().charAt(0).toUpperCase() || "?";
+const avatarUrl = session.user.image ?? null;
+const plural = (count: number, word: string) =>
+  `${count} ${word}${count === 1 ? "" : "s"}`;
 ---
 
 <Layout
@@ -29,45 +44,107 @@ const linkedProviders = new Set(accounts.map((account) => account.providerId));
   showNewsletter={false}
 >
   <div class="container-3xl pt-20 pb-10">
-    <div class="flex max-w-lg flex-col gap-10">
+    <div class="flex flex-col gap-10">
       <Breadcrumbs
         items={[{ label: "Explore", href: "/" }, { label: "Account" }]}
       />
-      <div class="flex flex-col gap-3">
-        <h1 class="type-h1 text-content-primary">Your account</h1>
-        <p class="type-body-md text-content-primary">{session.user.name}</p>
-        <p class="type-body-md text-content-secondary break-words">
-          {session.user.email}
-        </p>
-      </div>
-      <section class="flex flex-col gap-4" aria-labelledby="providers-title">
-        <h2
-          id="providers-title"
-          class="text-content-primary text-lg font-medium"
-        >
-          Connected accounts
-        </h2>
-        <div class="flex flex-col gap-3" data-account-actions>
+
+      <div class="flex flex-col gap-6">
+        <h1 class="type-h1 text-content-primary">Account</h1>
+        <div class="flex items-center gap-4">
           {
-            authProviders
-              .filter((provider) => auth.options.socialProviders[provider.id])
-              .map((provider) =>
-                linkedProviders.has(provider.id) ? (
-                  <p class="type-body-md text-content-secondary">
-                    {provider.name} connected
-                  </p>
-                ) : (
-                  <Button
-                    variant="secondary"
-                    data-connect-provider={provider.id}
-                  >
-                    Connect {provider.name}
-                  </Button>
-                ),
-              )
+            avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt=""
+                width="48"
+                height="48"
+                class="border-line-default size-12 shrink-0 rounded-full border"
+              />
+            ) : (
+              <span
+                aria-hidden="true"
+                class="border-line-default bg-surface-subtle text-content-secondary type-body-md inline-flex size-12 shrink-0 items-center justify-center rounded-full border font-[450]"
+              >
+                {initial}
+              </span>
+            )
           }
+          <div class="flex min-w-0 flex-col gap-0.5">
+            <p class="type-body-md text-content-primary truncate font-[450]">
+              {name}
+            </p>
+            <p class="type-body-md text-content-secondary truncate">
+              {session.user.email}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <section class="flex flex-col gap-4" aria-labelledby="library-title">
+        <h2
+          id="library-title"
+          class="text-content-primary text-lg font-medium tracking-tight"
+        >
+          Library
+        </h2>
+        <a
+          href="/library"
+          class="group border-line-default focus-visible:outline-content-primary flex items-center gap-4 border-b pt-3 pb-4 focus-visible:outline-1 focus-visible:outline-offset-2"
+        >
+          <div class="flex min-w-0 flex-1 flex-col gap-0.5">
+            <span
+              class="type-body-md text-content-primary font-[450] underline-offset-4 group-hover:underline"
+            >
+              Saved skills and collections
+            </span>
+            <span class="type-body-md text-content-secondary tabular-nums">
+              {plural(savedCount, "saved skill")} · {
+                plural(collectionCount, "collection")
+              }
+            </span>
+          </div>
+          <ChevronRightIcon
+            className="text-content-muted group-hover:text-content-primary size-4 shrink-0 transition-transform duration-150 ease-out group-hover:translate-x-0.5"
+            aria-hidden="true"
+          />
+        </a>
+      </section>
+
+      <div class="flex flex-col gap-10" data-account-actions>
+        <section class="flex flex-col gap-4" aria-labelledby="providers-title">
+          <h2
+            id="providers-title"
+            class="text-content-primary text-lg font-medium tracking-tight"
+          >
+            Connected accounts
+          </h2>
+          <div class="flex flex-col">
+            {
+              providers.map((provider) => (
+                <div class="border-line-default flex items-center justify-between gap-4 border-b py-3">
+                  <span class="type-body-md text-content-primary font-[450]">
+                    {provider.name}
+                  </span>
+                  {linkedProviders.has(provider.id) ? (
+                    <span class="type-body-md text-content-muted">
+                      Connected
+                    </span>
+                  ) : (
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      data-connect-provider={provider.id}
+                    >
+                      Connect
+                    </Button>
+                  )}
+                </div>
+              ))
+            }
+          </div>
           <p
-            class="type-body-md text-content-secondary"
+            class="type-body-md text-content-secondary text-pretty"
             role="alert"
             data-auth-error
             hidden={!Astro.url.searchParams.has("error")}
@@ -75,11 +152,12 @@ const linkedProviders = new Set(accounts.map((account) => account.providerId));
             Could not connect that account. Try again or use your existing
             sign-in method.
           </p>
-          <div class="mt-4">
-            <Button variant="secondary" data-sign-out>Sign out</Button>
-          </div>
+        </section>
+
+        <div class="border-line-default border-t pt-6">
+          <Button variant="secondary" data-sign-out>Sign out</Button>
         </div>
-      </section>
+      </div>
     </div>
   </div>
 </Layout>

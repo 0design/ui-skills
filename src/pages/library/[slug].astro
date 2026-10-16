@@ -1,0 +1,218 @@
+---
+import { env } from "cloudflare:workers";
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../ui/button.astro";
+import Breadcrumbs from "../../ui/breadcrumbs.astro";
+import LibrarySkillRow from "../../ui/library-skill-row.astro";
+import { DeleteCollectionButton } from "../../ui/delete-collection-button";
+import { getAuth, getPageSession } from "../../lib/auth";
+import { safeReturnTo } from "../../lib/auth-config";
+import { createLibraryStore } from "../../lib/library-store";
+import { isCollectionSlug, skillCountLabel } from "../../lib/library-types";
+import { toLibrarySkill } from "../../lib/library-view";
+
+export const prerender = false;
+
+const slug = Astro.params.slug ?? "";
+const auth = getAuth(env);
+if (!auth || !env.AUTH_DB) return Astro.redirect("/login");
+const session = await getPageSession(
+  auth,
+  Astro.request.headers,
+  Astro.response.headers,
+);
+if (!session) {
+  return Astro.redirect(
+    `/login?returnTo=${encodeURIComponent(safeReturnTo(Astro.url.pathname))}`,
+  );
+}
+
+const collection = isCollectionSlug(slug)
+  ? await createLibraryStore(env.AUTH_DB).getBySlug(session.user.id, slug)
+  : null;
+if (!collection) Astro.response.status = 404;
+
+const skills = (collection?.skillPaths ?? []).map(toLibrarySkill);
+const fieldClass =
+  "type-body-md text-content-primary placeholder:text-content-muted w-full rounded-lg bg-surface-default px-3 py-2 ring-1 ring-line-default outline-none focus-visible:ring-2 focus-visible:ring-content-primary";
+---
+
+<Layout
+  title={collection
+    ? `${collection.title} | Library | UI Skills`
+    : "Collection not found | UI Skills"}
+  description="A private collection of UI skills."
+  robots="noindex,nofollow"
+  showNewsletter={false}
+>
+  <div class="container-3xl pt-20 pb-10">
+    <div class="flex flex-col gap-10">
+      <Breadcrumbs
+        items={[
+          { label: "Explore", href: "/" },
+          { label: "Library", href: "/library" },
+          { label: collection?.title ?? "Collection" },
+        ]}
+      />
+      {
+        collection ? (
+          <>
+            <div class="flex items-start justify-between gap-4">
+              <div class="flex min-w-0 flex-col gap-2">
+                <h1 class="type-h1 text-content-primary text-balance">
+                  {collection.title}
+                </h1>
+                {collection.description ? (
+                  <p class="type-body-md text-content-secondary text-pretty">
+                    {collection.description}
+                  </p>
+                ) : null}
+                <p class="type-body-sm text-content-muted tabular-nums">
+                  {skillCountLabel(collection.skillPaths.length)}
+                </p>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                aria-expanded="false"
+                aria-controls="edit-collection"
+                data-disclosure
+              >
+                Edit
+              </Button>
+            </div>
+
+            <div id="edit-collection" class="flex flex-col gap-6" hidden>
+              <form
+                class="border-line-default bg-surface-default flex max-w-lg flex-col gap-3 rounded-lg border p-4"
+                data-update-collection
+                data-collection-id={collection.id}
+                aria-describedby="library-error"
+              >
+                <div class="flex flex-col gap-1">
+                  <label
+                    for="collection-title"
+                    class="type-body-md text-content-secondary"
+                  >
+                    Title
+                  </label>
+                  <input
+                    id="collection-title"
+                    name="title"
+                    required
+                    maxlength="80"
+                    value={collection.title}
+                    autocomplete="off"
+                    class={fieldClass}
+                  />
+                </div>
+                <div class="flex flex-col gap-1">
+                  <label
+                    for="collection-description"
+                    class="type-body-md text-content-secondary"
+                  >
+                    Description
+                  </label>
+                  <textarea
+                    id="collection-description"
+                    name="description"
+                    maxlength="240"
+                    rows="3"
+                    class={fieldClass}
+                    set:text={collection.description}
+                  />
+                </div>
+                <div class="flex items-center gap-2">
+                  <Button type="submit" variant="primary">
+                    Save
+                  </Button>
+                  <Button variant="ghost" data-disclosure-close>
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+              <div class="flex max-w-lg flex-col items-start gap-3">
+                <DeleteCollectionButton
+                  client:idle
+                  collectionId={collection.id}
+                  title={collection.title}
+                />
+                <p class="type-body-sm text-content-muted">
+                  Saved skills stay in your library.
+                </p>
+              </div>
+            </div>
+
+            <p
+              id="library-error"
+              class="type-body-md text-content-secondary text-pretty"
+              role="alert"
+              data-library-error
+              hidden
+            />
+
+            <section
+              class="flex flex-col gap-4"
+              aria-labelledby="collection-skills-title"
+            >
+              <h2
+                id="collection-skills-title"
+                class="text-content-primary text-lg font-medium tracking-tight"
+              >
+                Skills
+              </h2>
+              {skills.length > 0 ? (
+                <div class="flex flex-col">
+                  {skills.map((skill) => (
+                    <LibrarySkillRow
+                      skill={skill}
+                      action="remove"
+                      label={`Remove ${skill.name} from ${collection.title}`}
+                      actionAttrs={{
+                        "data-remove-skill": "",
+                        "data-collection-id": collection.id,
+                        "data-skill-path": skill.path,
+                      }}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div class="flex flex-col items-start gap-3">
+                  <p class="type-body-md text-content-secondary text-pretty">
+                    Star a skill and pick this collection to add it here.
+                  </p>
+                  <Button href="/skills" variant="secondary">
+                    Browse skills
+                  </Button>
+                </div>
+              )}
+            </section>
+          </>
+        ) : (
+          <div class="flex flex-col items-start gap-4">
+            <h1 class="type-h1 text-content-primary text-balance">
+              Collection not found
+            </h1>
+            <p class="type-body-md text-content-secondary text-pretty">
+              It may have been deleted, or the link is wrong.
+            </p>
+            <div class="flex items-center gap-2">
+              <Button href="/library" variant="secondary">
+                Back to library
+              </Button>
+              <Button href="/skills" variant="ghost">
+                Browse skills
+              </Button>
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { bindLibraryPage } from "../../lib/library-client";
+
+  bindLibraryPage(document);
+</script>

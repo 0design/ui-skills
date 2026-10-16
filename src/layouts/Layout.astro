@@ -222,6 +222,14 @@ const commandItems = [
                   </a>
                 </div>
                 <div class="flex shrink-0 items-center gap-2">
+                  <a
+                    href="/library"
+                    hidden
+                    data-library-link
+                    class="type-body-md text-content-secondary hover:text-content-primary"
+                  >
+                    Library
+                  </a>
                   <button
                     type="button"
                     aria-label="Search skills and playbook"
@@ -282,6 +290,16 @@ const commandItems = [
       {showFooter && !fullScreen && <Footer />}
     </div>
     {!fullScreen && <PromoBanner client:load />}
+    <script>
+      import { authClient } from "../lib/auth-client";
+
+      const libraryLink =
+        document.querySelector<HTMLAnchorElement>("[data-library-link]");
+      if (libraryLink) {
+        const { data } = await authClient.getSession();
+        if (data?.user) libraryLink.hidden = false;
+      }
+    </script>
   </body>
 </html>
 

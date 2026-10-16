@@ -1,0 +1,181 @@
+---
+import { env } from "cloudflare:workers";
+import { ChevronRightIcon } from "@heroicons/react/24/outline";
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../ui/button.astro";
+import Breadcrumbs from "../../ui/breadcrumbs.astro";
+import LibrarySkillRow from "../../ui/library-skill-row.astro";
+import { getAuth, getPageSession } from "../../lib/auth";
+import { safeReturnTo } from "../../lib/auth-config";
+import { createLibraryStore } from "../../lib/library-store";
+import { skillCountLabel } from "../../lib/library-types";
+import { toLibrarySkill } from "../../lib/library-view";
+
+export const prerender = false;
+
+const auth = getAuth(env);
+if (!auth || !env.AUTH_DB) return Astro.redirect("/login");
+const session = await getPageSession(
+  auth,
+  Astro.request.headers,
+  Astro.response.headers,
+);
+if (!session) {
+  return Astro.redirect(
+    `/login?returnTo=${encodeURIComponent(safeReturnTo(Astro.url.pathname))}`,
+  );
+}
+
+const library = await createLibraryStore(env.AUTH_DB).snapshot(session.user.id);
+const savedSkills = library.savedSkillPaths.map(toLibrarySkill);
+const inputClass =
+  "type-body-md text-content-primary placeholder:text-content-muted h-8 min-w-0 flex-1 rounded-lg bg-surface-default px-3 ring-1 ring-line-default outline-none focus-visible:ring-2 focus-visible:ring-content-primary";
+---
+
+<Layout
+  title="Library | UI Skills"
+  description="Saved skills and collections for your UI Skills account."
+  robots="noindex,nofollow"
+  showNewsletter={false}
+>
+  <div class="container-3xl pt-20 pb-10">
+    <div class="flex flex-col gap-10">
+      <Breadcrumbs
+        items={[{ label: "Explore", href: "/" }, { label: "Library" }]}
+      />
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex min-w-0 flex-col gap-2">
+          <h1 class="type-h1 text-content-primary text-balance">Library</h1>
+          <p class="type-body-md text-content-secondary">
+            Only you can see this.
+          </p>
+        </div>
+        <Button href="/account" variant="ghost" size="sm">Account</Button>
+      </div>
+
+      <p
+        id="library-error"
+        class="type-body-md text-content-secondary text-pretty"
+        role="alert"
+        data-library-error
+        hidden
+      >
+      </p>
+
+      <section class="flex flex-col gap-4" aria-labelledby="saved-skills-title">
+        <h2
+          id="saved-skills-title"
+          class="text-content-primary text-lg font-medium tracking-tight"
+        >
+          Saved skills
+        </h2>
+        {
+          savedSkills.length > 0 ? (
+            <div class="flex flex-col">
+              {savedSkills.map((skill) => (
+                <LibrarySkillRow
+                  skill={skill}
+                  action="star"
+                  label={`Remove ${skill.name} from saved skills`}
+                  actionAttrs={{
+                    "data-unsave": "",
+                    "data-skill-path": skill.path,
+                  }}
+                />
+              ))}
+            </div>
+          ) : (
+            <div class="flex flex-col items-start gap-3">
+              <p class="type-body-md text-content-secondary text-pretty">
+                Star a skill to save it here.
+              </p>
+              <Button href="/skills" variant="secondary">
+                Browse skills
+              </Button>
+            </div>
+          )
+        }
+      </section>
+
+      <section class="flex flex-col gap-4" aria-labelledby="collections-title">
+        <div class="flex items-center justify-between gap-4">
+          <h2
+            id="collections-title"
+            class="text-content-primary text-lg font-medium tracking-tight"
+          >
+            Collections
+          </h2>
+          <Button
+            variant="secondary"
+            size="sm"
+            aria-expanded="false"
+            aria-controls="create-collection"
+            data-disclosure
+          >
+            New collection
+          </Button>
+        </div>
+        <form
+          id="create-collection"
+          class="flex items-center gap-2"
+          data-create-collection
+          aria-describedby="library-error"
+          hidden
+        >
+          <label for="collection-title" class="sr-only">Collection name</label>
+          <input
+            id="collection-title"
+            name="title"
+            required
+            maxlength="80"
+            autocomplete="off"
+            placeholder="Collection name"
+            class={inputClass}
+          />
+          <Button type="submit" variant="primary">Create</Button>
+          <Button variant="ghost" data-disclosure-close>Cancel</Button>
+        </form>
+        {
+          library.collections.length > 0 ? (
+            <div class="flex flex-col">
+              {library.collections.map((collection) => (
+                <a
+                  href={`/library/${collection.slug}`}
+                  class="group border-line-default focus-visible:outline-content-primary flex items-center gap-4 border-b pt-3 pb-4 focus-visible:outline-1 focus-visible:outline-offset-2"
+                >
+                  <div class="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <span class="type-body-md text-content-primary truncate font-[450] underline-offset-4 group-hover:underline">
+                      {collection.title}
+                    </span>
+                    {collection.description ? (
+                      <span class="type-body-md text-content-secondary truncate">
+                        {collection.description}
+                      </span>
+                    ) : null}
+                  </div>
+                  <span class="type-body-sm text-content-muted shrink-0 tabular-nums">
+                    {skillCountLabel(collection.skillPaths.length)}
+                  </span>
+                  <ChevronRightIcon
+                    className="text-content-muted group-hover:text-content-primary size-4 shrink-0 transition-transform duration-150 ease-out group-hover:translate-x-0.5"
+                    aria-hidden="true"
+                  />
+                </a>
+              ))}
+            </div>
+          ) : (
+            <p class="type-body-md text-content-secondary text-pretty">
+              Group skills for a project or a review.
+            </p>
+          )
+        }
+      </section>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { bindLibraryPage } from "../../lib/library-client";
+
+  bindLibraryPage(document);
+</script>

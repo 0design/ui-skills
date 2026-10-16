@@ -1,6 +1,7 @@
 import {
   index,
   integer,
+  primaryKey,
   sqliteTable,
   text,
   uniqueIndex,
@@ -84,3 +85,56 @@ export const rateLimit = sqliteTable("auth_rate_limit", {
   count: integer("count").notNull(),
   lastRequest: integer("last_request").notNull(),
 });
+
+export const savedSkill = sqliteTable(
+  "saved_skill",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    skillPath: text("skill_path").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.userId, table.skillPath] }),
+    index("saved_skill_user_created_idx").on(table.userId, table.createdAt),
+  ],
+);
+
+export const userCollection = sqliteTable(
+  "user_collection",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    slug: text("slug").notNull(),
+    title: text("title").notNull(),
+    description: text("description").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (table) => [
+    uniqueIndex("user_collection_user_slug_idx").on(table.userId, table.slug),
+    index("user_collection_user_updated_idx").on(table.userId, table.updatedAt),
+  ],
+);
+
+export const userCollectionSkill = sqliteTable(
+  "user_collection_skill",
+  {
+    collectionId: text("collection_id")
+      .notNull()
+      .references(() => userCollection.id, { onDelete: "cascade" }),
+    skillPath: text("skill_path").notNull(),
+    position: integer("position").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.collectionId, table.skillPath] }),
+    index("user_collection_skill_order_idx").on(
+      table.collectionId,
+      table.position,
+    ),
+  ],
+);
