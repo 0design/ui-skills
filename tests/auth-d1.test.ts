@@ -190,7 +190,11 @@ test("Better Auth sessions and OAuth state work against local D1", async (t) => 
           Origin: "http://localhost:4321",
           "cf-connecting-ip": "127.0.0.1",
         },
-        body: JSON.stringify({ provider: "google", callbackURL: "/account" }),
+        body: JSON.stringify({
+          provider: "google",
+          callbackURL: "/account",
+          errorCallbackURL: "/login",
+        }),
       }),
     );
     assert.equal(stateResponse.status, 200);
@@ -210,6 +214,37 @@ test("Better Auth sessions and OAuth state work against local D1", async (t) => 
         );
         assert.equal(response.status, 302);
         assert.match(response.headers.get("location")!, /error=state/);
+      },
+    );
+
+    await t.test(
+      "OAuth errors reach login with a single actionable error code",
+      async () => {
+        const state = new URL(oauth.url).searchParams.get("state");
+        assert.ok(state);
+        const cookie = stateResponse.headers
+          .getSetCookie()
+          .map((value) => value.split(";")[0])
+          .join("; ");
+        const callback = new URL(
+          "http://localhost:4321/api/auth/callback/google",
+        );
+        callback.searchParams.set("state", state);
+        callback.searchParams.set("error", "account_not_linked");
+        const response = await auth.handler(
+          new Request(callback, {
+            headers: { cookie, "cf-connecting-ip": "127.0.0.1" },
+          }),
+        );
+        assert.equal(response.status, 302);
+        const location = new URL(
+          response.headers.get("location")!,
+          callback.origin,
+        );
+        assert.equal(location.pathname, "/login");
+        assert.deepEqual(location.searchParams.getAll("error"), [
+          "account_not_linked",
+        ]);
       },
     );
 

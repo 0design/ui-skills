@@ -81,7 +81,7 @@ const errorMessage =
       const result = await authClient.signIn.social({
         provider,
         callbackURL: form?.dataset.returnTo ?? "/account",
-        errorCallbackURL: "/login?error=sign_in_failed",
+        errorCallbackURL: "/login",
       });
       if (result.error) throw new Error("Sign-in failed");
     },
