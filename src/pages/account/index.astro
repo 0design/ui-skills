@@ -5,7 +5,6 @@ import Layout from "../../layouts/Layout.astro";
 import Button from "../../ui/button.astro";
 import Breadcrumbs from "../../ui/breadcrumbs.astro";
 import { getAuth, getPageSession } from "../../lib/auth";
-import { authProviders } from "../../lib/auth-config";
 import { createLibraryStore } from "../../lib/library-store";
 
 export const prerender = false;
@@ -18,18 +17,11 @@ const session = await getPageSession(
   Astro.response.headers,
 );
 if (!session) return Astro.redirect("/login");
-const accounts = await auth.api.listUserAccounts({
-  headers: Astro.request.headers,
-});
-const linkedProviders = new Set(accounts.map((account) => account.providerId));
 const library = env.AUTH_DB
   ? await createLibraryStore(env.AUTH_DB).snapshot(session.user.id)
   : null;
 const savedCount = library?.savedSkillPaths.length ?? 0;
 const collectionCount = library?.collections.length ?? 0;
-const providers = authProviders.filter(
-  (provider) => auth.options.socialProviders[provider.id],
-);
 const name = session.user.name || session.user.email;
 const initial = name.trim().charAt(0).toUpperCase() || "?";
 const avatarUrl = session.user.image ?? null;
@@ -111,52 +103,8 @@ const plural = (count: number, word: string) =>
         </a>
       </section>
 
-      <div class="flex flex-col gap-10" data-account-actions>
-        <section class="flex flex-col gap-4" aria-labelledby="providers-title">
-          <h2
-            id="providers-title"
-            class="text-content-primary text-lg font-medium tracking-tight"
-          >
-            Connected accounts
-          </h2>
-          <div class="flex flex-col">
-            {
-              providers.map((provider) => (
-                <div class="border-line-default flex items-center justify-between gap-4 border-b py-3">
-                  <span class="type-body-md text-content-primary font-[450]">
-                    {provider.name}
-                  </span>
-                  {linkedProviders.has(provider.id) ? (
-                    <span class="type-body-md text-content-muted">
-                      Connected
-                    </span>
-                  ) : (
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      data-connect-provider={provider.id}
-                    >
-                      Connect
-                    </Button>
-                  )}
-                </div>
-              ))
-            }
-          </div>
-          <p
-            class="type-body-md text-content-secondary text-pretty"
-            role="alert"
-            data-auth-error
-            hidden={!Astro.url.searchParams.has("error")}
-          >
-            Could not connect that account. Try again or use your existing
-            sign-in method.
-          </p>
-        </section>
-
-        <div class="border-line-default border-t pt-6">
-          <Button variant="secondary" data-sign-out>Sign out</Button>
-        </div>
+      <div data-account-actions>
+        <Button variant="secondary" data-sign-out>Sign out</Button>
       </div>
     </div>
   </div>
@@ -170,20 +118,10 @@ const plural = (count: number, word: string) =>
   bindAuthActions(
     actions,
     async (button) => {
-      if (button.hasAttribute("data-sign-out")) {
-        const result = await authClient.signOut();
-        if (result.error) throw new Error("Sign-out failed");
-        window.location.assign("/");
-      } else {
-        const provider = button.dataset.connectProvider;
-        if (provider !== "google" && provider !== "github") return;
-        const result = await authClient.linkSocial({
-          provider,
-          callbackURL: "/account",
-          errorCallbackURL: "/account?error=link_failed",
-        });
-        if (result.error) throw new Error("Connection failed");
-      }
+      if (!button.hasAttribute("data-sign-out")) return;
+      const result = await authClient.signOut();
+      if (result.error) throw new Error("Sign-out failed");
+      window.location.assign("/");
     },
     "That action could not be completed. Please try again.",
   );
