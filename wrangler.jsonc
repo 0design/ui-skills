@@ -3,6 +3,10 @@
   "compatibility_date": "2026-01-07",
   "compatibility_flags": ["nodejs_compat"],
   "keep_vars": true,
+  // Deployed default. Local development overrides this through ignored .dev.vars.
+  "vars": {
+    "BETTER_AUTH_URL": "https://www.ui-skills.com",
+  },
   "d1_databases": [
     {
       "binding": "AUTH_DB",

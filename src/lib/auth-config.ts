@@ -10,6 +10,11 @@ export type AuthEnv = {
   GITHUB_CLIENT_SECRET?: string;
 };
 
+export const authProviders = [
+  { id: "google", name: "Google" },
+  { id: "github", name: "GitHub" },
+] as const;
+
 export function getAuthConfig(env: AuthEnv) {
   const {
     BETTER_AUTH_URL,
@@ -23,14 +28,31 @@ export function getAuthConfig(env: AuthEnv) {
     !env.AUTH_DB ||
     !BETTER_AUTH_URL ||
     !BETTER_AUTH_SECRET ||
-    BETTER_AUTH_SECRET.length < 32 ||
-    !GOOGLE_CLIENT_ID ||
-    !GOOGLE_CLIENT_SECRET ||
-    !GITHUB_CLIENT_ID ||
-    !GITHUB_CLIENT_SECRET
+    BETTER_AUTH_SECRET.length < 32
   ) {
     return null;
   }
+
+  // A provider is enabled only when both credentials are present.
+  const socialProviders = {
+    ...(GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET
+      ? {
+          google: {
+            clientId: GOOGLE_CLIENT_ID,
+            clientSecret: GOOGLE_CLIENT_SECRET,
+          },
+        }
+      : {}),
+    ...(GITHUB_CLIENT_ID && GITHUB_CLIENT_SECRET
+      ? {
+          github: {
+            clientId: GITHUB_CLIENT_ID,
+            clientSecret: GITHUB_CLIENT_SECRET,
+          },
+        }
+      : {}),
+  };
+  if (Object.keys(socialProviders).length === 0) return null;
 
   try {
     const url = new URL(BETTER_AUTH_URL);
@@ -49,14 +71,7 @@ export function getAuthConfig(env: AuthEnv) {
       baseURL: url.origin,
       secret: BETTER_AUTH_SECRET,
       secureCookies: url.protocol === "https:",
-      google: {
-        clientId: GOOGLE_CLIENT_ID,
-        clientSecret: GOOGLE_CLIENT_SECRET,
-      },
-      github: {
-        clientId: GITHUB_CLIENT_ID,
-        clientSecret: GITHUB_CLIENT_SECRET,
-      },
+      socialProviders,
     };
   } catch {
     return null;

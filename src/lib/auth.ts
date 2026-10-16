@@ -31,7 +31,7 @@ export function getAuth(env: AuthEnv) {
       // D1 supports batched statements, not interactive transactions.
       transaction: false,
     }),
-    socialProviders: { google: config.google, github: config.github },
+    socialProviders: config.socialProviders,
     emailAndPassword: { enabled: false },
     account: {
       encryptOAuthTokens: true,

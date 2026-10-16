@@ -40,17 +40,26 @@ boundaries, reporting guidance, and deployment checks.
 
 Google and GitHub sign-in use Better Auth and Cloudflare D1. Public pages still
 work without OAuth credentials; sign-in stays unavailable until configured.
+Each provider is optional: GitHub-only production sign-in needs no Google
+credentials. Only providers with both a client ID and secret appear in the UI.
 
-1. Copy `.dev.vars.example` to the ignored `.dev.vars` file. Set the auth values.
-   Generate `BETTER_AUTH_SECRET` with `openssl rand -hex 32`.
+1. Run `npm run auth:setup:dev`. This prepares the ignored `.dev.vars` file,
+   sets the local auth origin, and generates a secret without printing it.
+   Existing credentials are preserved; running it again does not rotate the secret.
 2. Create Google and GitHub OAuth applications with these local callbacks:
    - `http://localhost:4321/api/auth/callback/google`
    - `http://localhost:4321/api/auth/callback/github`
-3. Run `npm run db:migrate:local`, then `npm run dev` and visit `/login`.
+3. Add the development provider IDs/secrets to `.dev.vars`. Run
+   `npm run db:migrate:local`, then `npm run dev` and visit `/login`.
 
 For production, create a D1 database and replace the local placeholder ID in
-`wrangler.jsonc`. Set `BETTER_AUTH_URL=https://www.ui-skills.com` and configure
-the five credential/secret values as Cloudflare Worker secrets. Register the same
+`wrangler.jsonc`. The production `BETTER_AUTH_URL` is configured there; local
+`.dev.vars` values are not uploaded. Configure `BETTER_AUTH_SECRET`,
+`GITHUB_CLIENT_ID`, and `GITHUB_CLIENT_SECRET` as Cloudflare Worker secrets for
+GitHub sign-in. Add `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` only if you also
+want Google sign-in. Generate a separate
+production secret with `openssl rand -hex 32`; do not reuse the local secret.
+Register the same
 callback paths on `https://www.ui-skills.com`; use a separate GitHub OAuth app
 for production. Apply migrations explicitly with `npm run db:migrate:remote`
 before deploying. Never use production credentials or D1 data in local previews.

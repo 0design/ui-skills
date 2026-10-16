@@ -2,11 +2,14 @@
 import { env } from "cloudflare:workers";
 import Layout from "../layouts/Layout.astro";
 import Button from "../ui/button.astro";
-import { getAuthConfig, safeReturnTo } from "../lib/auth-config";
+import { authProviders, getAuthConfig, safeReturnTo } from "../lib/auth-config";
 
 export const prerender = false;
 
-const configured = Boolean(getAuthConfig(env));
+const config = getAuthConfig(env);
+const providers = authProviders.filter(
+  (provider) => config?.socialProviders[provider.id],
+);
 const returnTo = safeReturnTo(Astro.url.searchParams.get("returnTo"));
 const errorCode = Astro.url.searchParams.get("error");
 const errorMessage =
@@ -33,18 +36,13 @@ const errorMessage =
         </p>
       </div>
       <div class="flex flex-col gap-3" data-sign-in data-return-to={returnTo}>
-        <Button
-          size="lg"
-          variant="secondary"
-          disabled={!configured}
-          data-provider="google">Continue with Google</Button
-        >
-        <Button
-          size="lg"
-          variant="secondary"
-          disabled={!configured}
-          data-provider="github">Continue with GitHub</Button
-        >
+        {
+          providers.map((provider) => (
+            <Button size="lg" variant="secondary" data-provider={provider.id}>
+              Continue with {provider.name}
+            </Button>
+          ))
+        }
         <p
           class="type-body-md text-content-secondary"
           role="alert"
@@ -54,7 +52,7 @@ const errorMessage =
           {errorMessage}
         </p>
         {
-          !configured && (
+          !config && (
             <p class="type-body-md text-content-secondary">
               Sign-in is not available yet. You can still explore all skills.
             </p>

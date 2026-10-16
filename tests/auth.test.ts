@@ -31,9 +31,39 @@ describe("website authentication", () => {
       null,
     );
     assert.equal(
-      getAuthConfig({ ...testEnv, GOOGLE_CLIENT_SECRET: undefined }),
+      getAuthConfig({
+        ...testEnv,
+        GOOGLE_CLIENT_SECRET: undefined,
+        GITHUB_CLIENT_SECRET: undefined,
+      }),
       null,
     );
+  });
+
+  test("supports GitHub alone and ignores incomplete Google credentials", () => {
+    for (const GOOGLE_CLIENT_ID of [undefined, "incomplete-google-id"]) {
+      const env = {
+        ...testEnv,
+        GOOGLE_CLIENT_ID,
+        GOOGLE_CLIENT_SECRET: undefined,
+      };
+      const config = getAuthConfig(env);
+      assert.ok(config);
+      assert.deepEqual(Object.keys(config.socialProviders), ["github"]);
+      assert.deepEqual(Object.keys(getAuth(env)!.options.socialProviders), [
+        "github",
+      ]);
+    }
+  });
+
+  test("supports Google alone and ignores incomplete GitHub credentials", () => {
+    const env = { ...testEnv, GITHUB_CLIENT_SECRET: undefined };
+    assert.deepEqual(Object.keys(getAuthConfig(env)!.socialProviders), [
+      "google",
+    ]);
+    assert.deepEqual(Object.keys(getAuth(env)!.options.socialProviders), [
+      "google",
+    ]);
   });
 
   test("requires an explicit safe auth origin", () => {

@@ -11,6 +11,7 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "auth:setup:dev": "node scripts/setup-auth-dev.mjs",
     "db:migrate:local": "wrangler d1 migrations apply AUTH_DB --local --config wrangler.jsonc",
     "db:migrate:remote": "wrangler d1 migrations apply AUTH_DB --remote --config wrangler.jsonc",
     "prebuild": "node ./scripts/sync-stonks.mjs",

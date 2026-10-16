@@ -4,6 +4,7 @@ import Layout from "../../layouts/Layout.astro";
 import Button from "../../ui/button.astro";
 import Breadcrumbs from "../../ui/breadcrumbs.astro";
 import { getAuth } from "../../lib/auth";
+import { authProviders } from "../../lib/auth-config";
 
 export const prerender = false;
 
@@ -44,20 +45,22 @@ const linkedProviders = new Set(accounts.map((account) => account.providerId));
         </h2>
         <div class="flex flex-col gap-3" data-account-actions>
           {
-            [
-              { id: "google", name: "Google" },
-              { id: "github", name: "GitHub" },
-            ].map((provider) =>
-              linkedProviders.has(provider.id) ? (
-                <p class="type-body-md text-content-secondary">
-                  {provider.name} connected
-                </p>
-              ) : (
-                <Button variant="secondary" data-connect-provider={provider.id}>
-                  Connect {provider.name}
-                </Button>
-              ),
-            )
+            authProviders
+              .filter((provider) => auth.options.socialProviders[provider.id])
+              .map((provider) =>
+                linkedProviders.has(provider.id) ? (
+                  <p class="type-body-md text-content-secondary">
+                    {provider.name} connected
+                  </p>
+                ) : (
+                  <Button
+                    variant="secondary"
+                    data-connect-provider={provider.id}
+                  >
+                    Connect {provider.name}
+                  </Button>
+                ),
+              )
           }
           <p
             class="type-body-md text-content-secondary"
