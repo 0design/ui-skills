@@ -11,6 +11,7 @@ import { WebMcpTools } from "../ui/webmcp-tools";
 import { serializeJsonLd } from "../lib/serialize-json-ld";
 import githubMetadata from "../data/github-metadata.json";
 import { formatStarCount } from "../lib/format-stars";
+import AuthNav from "../ui/auth-nav";
 
 const githubMetadataByRepository = githubMetadata as {
   repositories: Record<string, { stars: number }>;
@@ -220,6 +221,7 @@ const commandItems = [
               </a>
             </div>
             <div class="flex shrink-0 items-center gap-2">
+              <AuthNav client:idle />
               <button
                 type="button"
                 aria-label="Search skills and playbook"

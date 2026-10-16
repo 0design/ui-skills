@@ -1,0 +1,92 @@
+---
+import { env } from "cloudflare:workers";
+import Layout from "../layouts/Layout.astro";
+import Button from "../ui/button.astro";
+import { getAuthConfig, safeReturnTo } from "../lib/auth-config";
+
+export const prerender = false;
+
+const configured = Boolean(getAuthConfig(env));
+const returnTo = safeReturnTo(Astro.url.searchParams.get("returnTo"));
+const errorCode = Astro.url.searchParams.get("error");
+const errorMessage =
+  errorCode === "account_not_linked"
+    ? "Sign in with your original provider, then connect this provider from your account."
+    : errorCode
+      ? "Sign-in was not completed. Please try again."
+      : "";
+---
+
+<Layout
+  title="Sign in | UI Skills"
+  description="Sign in to your UI Skills account."
+  robots="noindex,nofollow"
+  showNewsletter={false}
+  showFooter={false}
+>
+  <div class="container-3xl mt-32 pb-16">
+    <div class="mx-auto flex max-w-sm flex-col gap-8">
+      <div class="flex flex-col gap-3">
+        <h1 class="type-h1 text-content-primary">Welcome to UI Skills</h1>
+        <p class="type-body-md text-content-secondary">
+          Sign in or create an account. Browsing skills is always open.
+        </p>
+      </div>
+      <div class="flex flex-col gap-3" data-sign-in data-return-to={returnTo}>
+        <Button
+          size="lg"
+          variant="secondary"
+          disabled={!configured}
+          data-provider="google">Continue with Google</Button
+        >
+        <Button
+          size="lg"
+          variant="secondary"
+          disabled={!configured}
+          data-provider="github">Continue with GitHub</Button
+        >
+        <p
+          class="type-body-md text-content-secondary"
+          role="alert"
+          data-auth-error
+          hidden={!errorMessage}
+        >
+          {errorMessage}
+        </p>
+        {
+          !configured && (
+            <p class="type-body-md text-content-secondary">
+              Sign-in is not available yet. You can still explore all skills.
+            </p>
+          )
+        }
+      </div>
+      <a
+        href="/skills"
+        class="type-body-md text-content-secondary hover:text-content-primary"
+        >Browse skills without an account</a
+      >
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { authClient } from "../lib/auth-client";
+  import { bindAuthActions } from "../lib/auth-actions";
+
+  const form = document.querySelector<HTMLElement>("[data-sign-in]");
+  bindAuthActions(
+    form,
+    async (button) => {
+      const provider = button.dataset.provider;
+      if (provider !== "google" && provider !== "github") return;
+      const result = await authClient.signIn.social({
+        provider,
+        callbackURL: form?.dataset.returnTo ?? "/account",
+        errorCallbackURL: "/login?error=sign_in_failed",
+      });
+      if (result.error) throw new Error("Sign-in failed");
+    },
+    "Unable to start sign-in. Please try again.",
+  );
+</script>

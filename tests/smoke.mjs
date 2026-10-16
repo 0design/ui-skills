@@ -69,6 +69,46 @@ let exitCode = 0;
 try {
   await waitForServer();
 
+  for (const [path, status] of [
+    ["/login", 200],
+    ["/account", 302],
+    ["/api/auth/get-session", 200],
+  ]) {
+    const response = await fetchLocal(path, {
+      redirect: "manual",
+      headers: { Accept: "text/markdown" },
+    });
+    if (response.status !== status) {
+      throw new Error(
+        `${path} returned ${response.status}, expected ${status}`,
+      );
+    }
+    for (const [header, value] of [
+      ["cache-control", "private, no-store"],
+      ["cdn-cache-control", "no-store"],
+      ["cloudflare-cdn-cache-control", "no-store"],
+      ["referrer-policy", "no-referrer"],
+      ["x-robots-tag", "noindex, nofollow"],
+    ]) {
+      if (response.headers.get(header) !== value) {
+        throw new Error(`${path} has an unsafe or missing ${header}`);
+      }
+    }
+    if (
+      path === "/login" &&
+      !response.headers.get("content-type")?.startsWith("text/html")
+    ) {
+      throw new Error("Private login HTML was converted to Markdown");
+    }
+    if (path === "/account" && response.headers.get("location") !== "/login") {
+      throw new Error("Anonymous account request did not redirect to login");
+    }
+    if (path === "/api/auth/get-session" && (await response.json()) !== null) {
+      throw new Error("Anonymous request received a session");
+    }
+    if (!response.bodyUsed) await response.arrayBuffer();
+  }
+
   const homepage = await fetchLocal("/");
   if (homepage.status !== 200) {
     throw new Error(`Homepage returned ${homepage.status}`);
