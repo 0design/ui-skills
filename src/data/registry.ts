@@ -5384,6 +5384,19 @@ const registrySource: RegistrySourceSkill[] = [
       'Build UI interactions whose motion comes from a physical model instead of durations and easing curves. Turn a feel described in words ("a toggle that feels heavy", "a drawer with a magnetic snap", "a card you throw into a corner", "a knob with heavy detents", "a sticky slider") into a production component driven by mass, stiffness, damping and force fields (magnets, friction, walls), on a line, in a plane or around a dial, plus a test rig that plots position, velocity and the force field, overlays the model\'s prediction on the measured motion, and exports the same spring to Framer Motion, react-spring, SwiftUI, Compose or CSS linear(). Use this whenever someone asks for an animation, transition, spring, gesture, drag, flick, snap points, bottom sheet, toggle, slider, carousel or any micro-interaction that should "feel" a certain way, or wants to tune or explain a spring, even if they never say "physics".',
   },
   {
+    slug: "playthru",
+    user: "diip3sh",
+    repo: "playthrou",
+    rawUrl:
+      "https://raw.githubusercontent.com/diip3sh/playthrou/main/skills/playthru/SKILL.md",
+    githubUrl:
+      "https://github.com/diip3sh/playthrou/blob/main/skills/playthru/SKILL.md",
+    name: "playthru",
+    topics: ["interaction", "motion", "frontend", "craft"],
+    description:
+      "Add a scripted, looping product demo to a website using the playthru library. A fake cursor glides over the real UI, clicks, types and zooms the camera in, with no video file. Use when the user wants a hero demo, product walkthrough, animated \"how it works\" section, or a self-playing demo of their app on a landing page, or mentions playthru.",
+  },
+  {
     slug: "regards-art-direction",
     user: "filipwojda",
     repo: "regards-skill",
@@ -5472,6 +5485,253 @@ const registrySource: RegistrySourceSkill[] = [
     topics: ["systems", "visual", "frontend"],
     description:
       "Lime design system rules for this project's UI. Use when building or changing any screen, component, form or style, when porting an existing screen onto Lime, or when checking UI against Lime.",
+  },
+  {
+    slug: "figma-code-workflows",
+    user: "figma",
+    repo: "mcp-server-guide",
+    rawUrl:
+      "https://raw.githubusercontent.com/figma/mcp-server-guide/main/skills/figma-code-workflows/SKILL.md",
+    githubUrl:
+      "https://github.com/figma/mcp-server-guide/blob/main/skills/figma-code-workflows/SKILL.md",
+    name: "figma-code-workflows",
+    topics: ["tooling", "frontend", "systems"],
+    description:
+      "Import or upload local HTML or project files into Figma, choose editable Design frames, runnable Code Layers or standalone Code (also known as Make), and repair imported previews. Use only when the user explicitly names editable Design layers, a runnable Code Layer, or a standalone Code/Make file, or supplies a Figma file key/link as the import destination. Generic code or code-component requests need output clarification before using this workflow.",
+  },
+  {
+    slug: "figma-spec",
+    user: "figma",
+    repo: "mcp-server-guide",
+    rawUrl:
+      "https://raw.githubusercontent.com/figma/mcp-server-guide/main/skills/figma-spec/SKILL.md",
+    githubUrl:
+      "https://github.com/figma/mcp-server-guide/blob/main/skills/figma-spec/SKILL.md",
+    name: "figma-spec",
+    topics: ["systems", "craft", "frontend"],
+    description:
+      "This skill is required to create, read, edit, review, or comment on Figma specs. You must read it when working on a PRD, brief, RFC or any kind of document in either a standalone Figma spec or a Figma spec embedded in a Figma Design or Figjam file.",
+  },
+  {
+    slug: "transitions-ui-generation",
+    user: "Jakubantalik",
+    repo: "transitions.dev",
+    rawUrl:
+      "https://raw.githubusercontent.com/Jakubantalik/transitions.dev/main/skills/transitions-ui-generation/SKILL.md",
+    githubUrl:
+      "https://github.com/Jakubantalik/transitions.dev/blob/main/skills/transitions-ui-generation/SKILL.md",
+    name: "transitions-ui-generation",
+    topics: ["motion", "visual", "interaction", "frontend"],
+    description:
+      "Make any UI appear as if an AI agent is generating it. A dotted wireframe is drawn from the element's own structure (outline, boxes, text lines, icon paths, with guides, corner handles and size labels), then the real UI is revealed behind a scan line with a fade on a smooth ease-out. Two modes, skeleton and skeleton + generation texts (an agent log, the motion CSS being written, and a step line). One dependency-free runtime that works with any framework (vanilla, React, Next.js, Vue, Svelte). Use when the user asks for a \"generation animation\", \"AI generating the UI\", \"agent building the component\", \"build-in animation\", \"wireframe to UI reveal\", \"skeleton generation\", \"dotted wireframe\", \"matrix dots\", \"make it look generated\", \"futuristic reveal\", \"generative UI loading\", or for an AI product that should show its output being built. Also the commands transitions generate, transitions generate texts and transitions generate preview.",
+  },
+  {
+    slug: "embedded-captions",
+    user: "heygen-com",
+    repo: "hyperframes",
+    rawUrl:
+      "https://raw.githubusercontent.com/heygen-com/hyperframes/main/skills/embedded-captions/SKILL.md",
+    githubUrl:
+      "https://github.com/heygen-com/hyperframes/blob/main/skills/embedded-captions/SKILL.md",
+    name: "embedded-captions",
+    topics: ["video", "remotion", "motion"],
+    description:
+      "Add captions or subtitles to an existing single-subject talking-head video without editing the footage. Use for plain verbatim captions, cinematic captions embedded behind the subject, VFX captions, “炸/特效/酷炫字幕,” or a named identity from the 35-style catalog. Route by visual identity, not by backend engine. The quiet `anchor` rail is the default; embed every word only when the user explicitly wants a fully cinematic treatment. The workflow runs locally end to end, including transcription and subject matting; split multi-shot footage before applying it.",
+  },
+  {
+    slug: "faceless-explainer",
+    user: "heygen-com",
+    repo: "hyperframes",
+    rawUrl:
+      "https://raw.githubusercontent.com/heygen-com/hyperframes/main/skills/faceless-explainer/SKILL.md",
+    githubUrl:
+      "https://github.com/heygen-com/hyperframes/blob/main/skills/faceless-explainer/SKILL.md",
+    name: "faceless-explainer",
+    topics: ["video", "remotion", "motion"],
+    description:
+      "Turn arbitrary text — an article, notes, a topic, a brief — into a faceless explainer video: there is no site or footage to capture, so the visuals are invented per scene (typography, abstract graphics, diagrams, data-viz). Use for topic explainers, concept breakdowns, how-tos, listicles. Not a video built from a website (/product-launch-video — promo or tour). Unclear → /hyperframes.",
+  },
+  {
+    slug: "figma",
+    user: "heygen-com",
+    repo: "hyperframes",
+    rawUrl:
+      "https://raw.githubusercontent.com/heygen-com/hyperframes/main/skills/figma/SKILL.md",
+    githubUrl:
+      "https://github.com/heygen-com/hyperframes/blob/main/skills/figma/SKILL.md",
+    name: "figma",
+    topics: ["video", "remotion", "motion"],
+    description:
+      "Import Figma content into a HyperFrames composition — rendered assets, brand tokens, components, storyboard sections → reconstructed motion (frames read as states, not slides) (REST/CLI), connector-assisted motion when available, and shaders from a connector or native export. Use when the user pastes a figma.com link or asks to bring a Figma design, frame, logo, brand, or animation into a video/composition.",
+  },
+  {
+    slug: "hyperframes-animation",
+    user: "heygen-com",
+    repo: "hyperframes",
+    rawUrl:
+      "https://raw.githubusercontent.com/heygen-com/hyperframes/main/skills/hyperframes-animation/SKILL.md",
+    githubUrl:
+      "https://github.com/heygen-com/hyperframes/blob/main/skills/hyperframes-animation/SKILL.md",
+    name: "hyperframes-animation",
+    topics: ["video", "remotion", "motion"],
+    description:
+      "All animation knowledge for HyperFrames — atomic motion rules, multi-phase scene blueprints, scene transitions, broader motion-design techniques, AND the seven runtime adapters (GSAP default, plus Lottie, Three.js, Anime.js, CSS keyframes, Web Animations API, TypeGPU). Use for any motion or animation task: pick 2-4 rules and compose, or load a blueprint, or look up runtime-specific API (e.g. GSAP eases / Lottie player / Three.js mixer). Also covers auditing an existing composition's choreography (animation map) and 24 named text-animation effects. HyperFrames-native: single paused timeline, seek-safe, deterministic.",
+  },
+  {
+    slug: "hyperframes-audio",
+    user: "heygen-com",
+    repo: "hyperframes",
+    rawUrl:
+      "https://raw.githubusercontent.com/heygen-com/hyperframes/main/skills/hyperframes-audio/SKILL.md",
+    githubUrl:
+      "https://github.com/heygen-com/hyperframes/blob/main/skills/hyperframes-audio/SKILL.md",
+    name: "hyperframes-audio",
+    topics: ["video", "remotion", "motion"],
+    description:
+      "Use when audio already placed in a HyperFrames composition needs to be mixed: fade-in/fade-out, crossfade, track gain or volume, volume automation, ducking, a music bed that fights a voiceover (voiceover carve), effects on a track (EQ, compressor, limiter, gate, saturation, delay, reverb, chorus, phaser, bitcrush), automation envelopes drawn on a track's volume or any effect parameter, or one submix bus carrying a chain, a fader and an automation clock for several tracks at once (`<hf-audio-group>`). Don't use for sourcing or generating audio — finding BGM, SFX, or making a voiceover is `/media-use`. Don't use for clip timing or track layout, which is `/hyperframes-core`.",
+  },
+  {
+    slug: "hyperframes-cli",
+    user: "heygen-com",
+    repo: "hyperframes",
+    rawUrl:
+      "https://raw.githubusercontent.com/heygen-com/hyperframes/main/skills/hyperframes-cli/SKILL.md",
+    githubUrl:
+      "https://github.com/heygen-com/hyperframes/blob/main/skills/hyperframes-cli/SKILL.md",
+    name: "hyperframes-cli",
+    topics: ["video", "remotion", "motion"],
+    description:
+      "Use the HyperFrames CLI development loop: init, add, catalog, capture, lint, check, snapshot, compare, grade-compare, preview, play, present, beats, keyframes, single or batch render, publish, cloud, cloudrun, feedback, lambda, doctor, browser, info, upgrade, skills, compositions, timeline, history, clean, docs, benchmark, telemetry, transcribe, auth, tts, and remove-background. Also use when diagnosing build or render failures. validate, inspect, and layout are deprecated aliases; use check. Covers local, HeyGen-hosted cloud, AWS Lambda, and Google Cloud Run rendering.",
+  },
+  {
+    slug: "hyperframes-creative",
+    user: "heygen-com",
+    repo: "hyperframes",
+    rawUrl:
+      "https://raw.githubusercontent.com/heygen-com/hyperframes/main/skills/hyperframes-creative/SKILL.md",
+    githubUrl:
+      "https://github.com/heygen-com/hyperframes/blob/main/skills/hyperframes-creative/SKILL.md",
+    name: "hyperframes-creative",
+    topics: ["video", "remotion", "motion"],
+    description:
+      "Non-animation creative direction for HyperFrames videos. Use for design spec (frame.md / design.md) handling, palettes, typography, narration, beat planning, audio-reactive visuals, composition patterns, and brand / style decisions. For atomic motion patterns and scene blueprints, use `hyperframes-animation`.",
+  },
+  {
+    slug: "hyperframes-keyframes",
+    user: "heygen-com",
+    repo: "hyperframes",
+    rawUrl:
+      "https://raw.githubusercontent.com/heygen-com/hyperframes/main/skills/hyperframes-keyframes/SKILL.md",
+    githubUrl:
+      "https://github.com/heygen-com/hyperframes/blob/main/skills/hyperframes-keyframes/SKILL.md",
+    name: "hyperframes-keyframes",
+    topics: ["video", "remotion", "motion"],
+    description:
+      "Use when a HyperFrames composition needs a punch-in, punch-out, zoom, reframe, Ken Burns treatment, camera move, visual match/whip handoff, or other seek-safe 2D/3D keyframes; also for GSAP, CSS keyframes, Anime.js, WAAPI, FLIP, paths, masks, SVG morph/draw, text trails, 3D depth, or `hyperframes keyframes` diagnostics. Don't use for broad scene strategy, brand design, media sourcing, captions, or general video planning.",
+  },
+  {
+    slug: "hyperframes-registry",
+    user: "heygen-com",
+    repo: "hyperframes",
+    rawUrl:
+      "https://raw.githubusercontent.com/heygen-com/hyperframes/main/skills/hyperframes-registry/SKILL.md",
+    githubUrl:
+      "https://github.com/heygen-com/hyperframes/blob/main/skills/hyperframes-registry/SKILL.md",
+    name: "hyperframes-registry",
+    topics: ["video", "remotion", "motion"],
+    description:
+      "Search, install, and wire registry blocks and components into HyperFrames compositions. Use BEFORE hand-building any named visual — whenever a brief, a user, or a storyboard names a look, effect, treatment, or transition such as CRT scanlines, glitch, chromatic aberration, film grain, a shimmer sweep, a chart, a code or terminal window, a map, or a confetti burst — because roughly 400 hosted items already cover many of them and the search ranks all of them with nothing installed, no project, and no account. Also use when running hyperframes add or hyperframes catalog, installing one item or every block matching a tag, wiring an installed item into index.html, or working with hyperframes.json. Covers discovery, install locations, block sub-composition wiring, component snippet merging, and authoring a new block or component to contribute upstream (idea → scaffold → validate → PR).",
+  },
+  {
+    slug: "hyperframes-studio",
+    user: "heygen-com",
+    repo: "hyperframes",
+    rawUrl:
+      "https://raw.githubusercontent.com/heygen-com/hyperframes/main/skills/hyperframes-studio/SKILL.md",
+    githubUrl:
+      "https://github.com/heygen-com/hyperframes/blob/main/skills/hyperframes-studio/SKILL.md",
+    name: "hyperframes-studio",
+    topics: ["video", "remotion", "motion"],
+    description:
+      "Use when working with a person on a HyperFrames project in Studio: first, whether their message asks for a change at all (questions, loose ideas and \"don't change anything\" get an answer and a plan, not an edit); for a new film, the plan, storyboard and build order that the HyperFrames launch films follow; and how the timeline should be laid out so it reads well (one caption track, one element kind per track, every scene a sub-composition) and where captions and key content may sit (safe zones). Don't use for how to perform an individual edit (split, trim, retime, volume, copy, swap): that is `creator-editing-recipes.md` in `/hyperframes-core`.",
+  },
+  {
+    slug: "media-use",
+    user: "heygen-com",
+    repo: "hyperframes",
+    rawUrl:
+      "https://raw.githubusercontent.com/heygen-com/hyperframes/main/skills/media-use/SKILL.md",
+    githubUrl:
+      "https://github.com/heygen-com/hyperframes/blob/main/skills/media-use/SKILL.md",
+    name: "media-use",
+    topics: ["video", "remotion", "motion"],
+    description:
+      "Agent Media OS for a HyperFrames project. Resolve BGM, SFX, image, icon, brand logo, voice, color grade, or LUT into a frozen local file or paste-ready block + ledger record (one verb, `resolve`); generate via TTS / music / image models when the catalog misses; produce voiceover, transcription, captions, and background removal through one shared audio engine; operate on media (cut / reframe / transform); and reuse assets across projects. Also use for vague feedback that real footage looks dark, flat, boring, should feel retro/camcorder/print/ASCII, needs privacy, or needs a media reveal. When the host app provides its own music or sound-effect tools, use those for music and sound effects; `resolve --type bgm|sfx` needs the heygen CLI. When `HEYGEN_API_BASE` is set, HeyGen calls go through that host with no CLI sign-in.",
+  },
+  {
+    slug: "music-to-video",
+    user: "heygen-com",
+    repo: "hyperframes",
+    rawUrl:
+      "https://raw.githubusercontent.com/heygen-com/hyperframes/main/skills/music-to-video/SKILL.md",
+    githubUrl:
+      "https://github.com/heygen-com/hyperframes/blob/main/skills/music-to-video/SKILL.md",
+    name: "music-to-video",
+    topics: ["video", "remotion", "motion"],
+    description:
+      "Turn a music track (an audio file, a video to pull audio from, or a track generated from a mood brief) into a beat-synced video — lyric video, slideshow, or kinetic promo. The music drives all pacing; any user-supplied images/videos are cut onto the same beat grid, and a complete video needs zero assets. Narrated pieces → the input-matched workflow (see /hyperframes). Unclear → /hyperframes.",
+  },
+  {
+    slug: "pr-to-video",
+    user: "heygen-com",
+    repo: "hyperframes",
+    rawUrl:
+      "https://raw.githubusercontent.com/heygen-com/hyperframes/main/skills/pr-to-video/SKILL.md",
+    githubUrl:
+      "https://github.com/heygen-com/hyperframes/blob/main/skills/pr-to-video/SKILL.md",
+    name: "pr-to-video",
+    topics: ["video", "remotion", "motion"],
+    description:
+      "Turn a GitHub pull request (a PR URL, owner/repo#N, or 'this PR' in a checked-out repo) into a code-change explainer video — changelog, feature reveal, fix, or refactor walkthrough built from the diff, commits, and files: the input is a code change, not a website. Not a product promo (/product-launch-video) or a no-PR topic explainer (/faceless-explainer). Unclear → /hyperframes.",
+  },
+  {
+    slug: "product-launch-video",
+    user: "heygen-com",
+    repo: "hyperframes",
+    rawUrl:
+      "https://raw.githubusercontent.com/heygen-com/hyperframes/main/skills/product-launch-video/SKILL.md",
+    githubUrl:
+      "https://github.com/heygen-com/hyperframes/blob/main/skills/product-launch-video/SKILL.md",
+    name: "product-launch-video",
+    topics: ["video", "remotion", "motion"],
+    description:
+      "Turn a product or marketing URL, pasted script, or brief into a product launch / promo video — SaaS promos, feature reveals, product demos, app and company launches. Use when the user wants to market, launch, promote, or reveal a product; the default for any commercial URL. Site tours / showcases of a website route here too — the brief carries the show-it-as-is intent. Unclear → /hyperframes.",
+  },
+  {
+    slug: "slideshow",
+    user: "heygen-com",
+    repo: "hyperframes",
+    rawUrl:
+      "https://raw.githubusercontent.com/heygen-com/hyperframes/main/skills/slideshow/SKILL.md",
+    githubUrl:
+      "https://github.com/heygen-com/hyperframes/blob/main/skills/slideshow/SKILL.md",
+    name: "slideshow",
+    topics: ["video", "remotion", "motion"],
+    description:
+      "Author a HyperFrames slideshow — a presentation, pitch deck, or interactive deck with discrete slides, fragment reveals, branching, hotspot navigation, and built-in presenter mode with speaker notes; also converts an existing page into a deck. Output is a navigable deck, not a rendered MP4. If the user didn't explicitly ask for a slideshow, confirm before authoring. Unclear → /hyperframes.",
+  },
+  {
+    slug: "talking-head-recut",
+    user: "heygen-com",
+    repo: "hyperframes",
+    rawUrl:
+      "https://raw.githubusercontent.com/heygen-com/hyperframes/main/skills/talking-head-recut/SKILL.md",
+    githubUrl:
+      "https://github.com/heygen-com/hyperframes/blob/main/skills/talking-head-recut/SKILL.md",
+    name: "talking-head-recut",
+    topics: ["video", "remotion", "motion"],
+    description:
+      "Package an existing talking-head / interview / podcast video with timed, designed GRAPHIC OVERLAY cards — kinetic titles, lower-thirds, data callouts, quotes, side panels, picture-in-picture — synced to the transcript, on a 16:9 / 9:16 / 4:5 canvas of your choice; the clip plays untouched underneath. Trigger on \"graphic overlays\", \"on-screen graphics\", \"package / dress up my video\". Not plain subtitles (/embedded-captions). Unclear → /hyperframes.",
   },
 ];
 
