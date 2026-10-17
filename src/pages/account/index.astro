@@ -4,6 +4,7 @@ import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import Layout from "../../layouts/Layout.astro";
 import Button from "../../ui/button.astro";
 import Breadcrumbs from "../../ui/breadcrumbs.astro";
+import LibraryCollectionCard from "../../ui/library-collection-card.astro";
 import { getAuth, getPageSession } from "../../lib/auth";
 import { createLibraryStore } from "../../lib/library-store";
 
@@ -20,13 +21,9 @@ if (!session) return Astro.redirect("/login");
 const library = env.AUTH_DB
   ? await createLibraryStore(env.AUTH_DB).snapshot(session.user.id)
   : null;
-const savedCount = library?.savedSkillPaths.length ?? 0;
-const collectionCount = library?.collections.length ?? 0;
 const name = session.user.name || session.user.email;
 const initial = name.trim().charAt(0).toUpperCase() || "?";
 const avatarUrl = session.user.image ?? null;
-const plural = (count: number, word: string) =>
-  `${count} ${word}${count === 1 ? "" : "s"}`;
 ---
 
 <Layout
@@ -74,33 +71,39 @@ const plural = (count: number, word: string) =>
       </div>
 
       <section class="flex flex-col gap-4" aria-labelledby="library-title">
-        <h2
-          id="library-title"
-          class="text-content-primary text-lg font-medium tracking-tight"
-        >
-          Library
-        </h2>
-        <a
-          href="/library"
-          class="group border-line-default focus-visible:outline-content-primary flex items-center gap-4 border-b pt-3 pb-4 focus-visible:outline-1 focus-visible:outline-offset-2"
-        >
-          <div class="flex min-w-0 flex-1 flex-col gap-0.5">
-            <span
-              class="type-body-md text-content-primary font-[450] underline-offset-4 group-hover:underline"
-            >
-              Saved skills and collections
-            </span>
-            <span class="type-body-md text-content-secondary tabular-nums">
-              {plural(savedCount, "saved skill")} · {
-                plural(collectionCount, "collection")
-              }
-            </span>
-          </div>
-          <ChevronRightIcon
-            className="text-content-muted group-hover:text-content-primary size-4 shrink-0 transition-transform duration-150 ease-out group-hover:translate-x-0.5"
-            aria-hidden="true"
+        <div class="flex items-center justify-between gap-4">
+          <h2
+            id="library-title"
+            class="text-content-primary text-lg font-medium tracking-tight"
+          >
+            Library
+          </h2>
+          <a
+            href="/library"
+            class="type-body-md text-content-secondary hover:text-content-primary focus-visible:outline-content-primary inline-flex items-center gap-1 rounded-md focus-visible:outline-1 focus-visible:outline-offset-2"
+          >
+            Open library
+            <ChevronRightIcon className="size-4" aria-hidden="true" />
+          </a>
+        </div>
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <LibraryCollectionCard
+            href="/library"
+            title="Favorites"
+            icon="star"
+            skillPaths={library?.savedSkillPaths ?? []}
           />
-        </a>
+          {
+            library?.collections.map((collection) => (
+              <LibraryCollectionCard
+                href={`/library/${collection.slug}`}
+                title={collection.title}
+                collectionId={collection.id}
+                skillPaths={collection.skillPaths}
+              />
+            ))
+          }
+        </div>
       </section>
 
       <div data-account-actions>

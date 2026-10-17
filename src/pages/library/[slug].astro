@@ -1,5 +1,6 @@
 ---
 import { env } from "cloudflare:workers";
+import { PencilIcon } from "@heroicons/react/24/outline";
 import Layout from "../../layouts/Layout.astro";
 import Button from "../../ui/button.astro";
 import Breadcrumbs from "../../ui/breadcrumbs.astro";
@@ -8,7 +9,7 @@ import { DeleteCollectionButton } from "../../ui/delete-collection-button";
 import { getAuth, getPageSession } from "../../lib/auth";
 import { safeReturnTo } from "../../lib/auth-config";
 import { createLibraryStore } from "../../lib/library-store";
-import { isCollectionSlug, skillCountLabel } from "../../lib/library-types";
+import { isCollectionSlug } from "../../lib/library-types";
 import { toLibrarySkill } from "../../lib/library-view";
 
 export const prerender = false;
@@ -67,19 +68,24 @@ const fieldClass =
                     {collection.description}
                   </p>
                 ) : null}
-                <p class="type-body-sm text-content-muted tabular-nums">
-                  {skillCountLabel(collection.skillPaths.length)}
-                </p>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                aria-expanded="false"
-                aria-controls="edit-collection"
-                data-disclosure
-              >
-                Edit
-              </Button>
+              <div class="flex shrink-0 items-center gap-1">
+                <button
+                  type="button"
+                  aria-label="Edit collection"
+                  aria-expanded="false"
+                  aria-controls="edit-collection"
+                  data-disclosure
+                  class="text-content-secondary hover:bg-fill-strong hover:text-content-primary focus-visible:outline-content-primary inline-flex size-7 cursor-pointer items-center justify-center rounded-lg outline-none focus-visible:outline-1 focus-visible:outline-offset-2"
+                >
+                  <PencilIcon className="size-4" aria-hidden="true" />
+                </button>
+                <DeleteCollectionButton
+                  client:load
+                  collectionId={collection.id}
+                  title={collection.title}
+                />
+              </div>
             </div>
 
             <div id="edit-collection" class="flex flex-col gap-6" hidden>
@@ -131,16 +137,6 @@ const fieldClass =
                   </Button>
                 </div>
               </form>
-              <div class="flex max-w-lg flex-col items-start gap-3">
-                <DeleteCollectionButton
-                  client:idle
-                  collectionId={collection.id}
-                  title={collection.title}
-                />
-                <p class="type-body-sm text-content-muted">
-                  Saved skills stay in your library.
-                </p>
-              </div>
             </div>
 
             <p
@@ -151,28 +147,14 @@ const fieldClass =
               hidden
             />
 
-            <section
-              class="flex flex-col gap-4"
-              aria-labelledby="collection-skills-title"
-            >
-              <h2
-                id="collection-skills-title"
-                class="text-content-primary text-lg font-medium tracking-tight"
-              >
-                Skills
-              </h2>
+            <div class="-mt-6">
               {skills.length > 0 ? (
                 <div class="flex flex-col">
                   {skills.map((skill) => (
                     <LibrarySkillRow
                       skill={skill}
-                      action="remove"
                       label={`Remove ${skill.name} from ${collection.title}`}
-                      actionAttrs={{
-                        "data-remove-skill": "",
-                        "data-collection-id": collection.id,
-                        "data-skill-path": skill.path,
-                      }}
+                      collectionId={collection.id}
                     />
                   ))}
                 </div>
@@ -186,7 +168,7 @@ const fieldClass =
                   </Button>
                 </div>
               )}
-            </section>
+            </div>
           </>
         ) : (
           <div class="flex flex-col items-start gap-4">

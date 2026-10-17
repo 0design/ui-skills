@@ -1,5 +1,6 @@
 import { AlertDialog } from "@base-ui/react/alert-dialog";
-import { useState } from "react";
+import { TrashIcon } from "@heroicons/react/24/outline";
+import { useRef, useState } from "react";
 import { deleteCollection } from "../lib/library-client";
 import { cn } from "../lib/cn";
 
@@ -17,20 +18,28 @@ export function DeleteCollectionButton({
 }: DeleteCollectionButtonProps) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <AlertDialog.Root>
+    <AlertDialog.Root
+      onOpenChangeComplete={(open) => {
+        if (open || document.activeElement !== triggerRef.current) return;
+        triggerRef.current?.blur();
+      }}
+    >
       <AlertDialog.Trigger
-        className={cn(
-          controlClass,
-          "border-line-default bg-fill-default text-content-primary hover:bg-fill-subtle",
-        )}
+        ref={triggerRef}
+        aria-label={`Delete ${title}`}
+        className="text-content-secondary hover:bg-fill-strong hover:text-content-primary focus-visible:outline-content-primary inline-flex size-7 cursor-pointer items-center justify-center rounded-lg outline-none focus-visible:outline-1 focus-visible:outline-offset-2 disabled:opacity-60"
       >
-        Delete collection
+        <TrashIcon className="size-4" aria-hidden="true" />
       </AlertDialog.Trigger>
       <AlertDialog.Portal>
         <AlertDialog.Backdrop className="bg-fill-inverse/35 fixed inset-0 z-50" />
-        <AlertDialog.Popup className="border-line-default bg-surface-default fixed top-1/2 left-1/2 z-50 w-[min(24rem,calc(100%-2rem))] -translate-x-1/2 -translate-y-1/2 rounded-xl border p-5 shadow-sm outline-none">
+        <AlertDialog.Popup
+          finalFocus={false}
+          className="border-line-default bg-surface-default fixed top-1/2 left-1/2 z-50 w-[min(24rem,calc(100%-2rem))] -translate-x-1/2 -translate-y-1/2 rounded-xl border p-5 shadow-sm outline-none"
+        >
           <AlertDialog.Title className="text-content-primary text-lg font-medium tracking-tight text-balance">
             Delete this collection?
           </AlertDialog.Title>
