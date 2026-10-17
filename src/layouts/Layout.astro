@@ -4,6 +4,7 @@ import CtaSection from "../ui/cta-section.astro";
 import { skills } from "../data/skills";
 import { playbook } from "../data/playbook";
 import Footer from "../ui/footer.astro";
+import { AccountMenu } from "../ui/account-menu";
 import { CommandDialog } from "../ui/command-dialog";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { PromoBanner } from "../ui/promo-banner";
@@ -212,16 +213,9 @@ const commandItems = [
                     data-library-link
                     class="type-body-md text-content-secondary hover:text-content-primary focus-visible:outline-content-primary inline-flex items-center rounded-full focus-visible:outline-1 focus-visible:outline-offset-2"
                   >
-                    <span data-library-label>Library</span>
-                    <img
-                      data-library-avatar
-                      alt=""
-                      width="32"
-                      height="32"
-                      hidden
-                      class="border-line-default size-8 rounded-full border object-cover"
-                    />
+                    Library
                   </a>
+                  <AccountMenu client:load />
                   <button
                     type="button"
                     aria-label="Search skills and playbook"
@@ -292,24 +286,8 @@ const commandItems = [
       );
       const { data } = await authClient.getSession();
       if (signInLink) signInLink.hidden = Boolean(data?.user);
-      if (libraryLink) {
-        const image = data?.user?.image;
-        if (data?.user) libraryLink.hidden = false;
-        if (image) {
-          const avatar = libraryLink.querySelector<HTMLImageElement>(
-            "[data-library-avatar]",
-          );
-          const label = libraryLink.querySelector<HTMLElement>(
-            "[data-library-label]",
-          );
-          if (avatar) {
-            avatar.src = image;
-            avatar.hidden = false;
-          }
-          if (label) label.hidden = true;
-          libraryLink.href = "/account";
-          libraryLink.setAttribute("aria-label", "Account");
-        }
+      if (libraryLink && data?.user && !data.user.image) {
+        libraryLink.hidden = false;
       }
     </script>
   </body>

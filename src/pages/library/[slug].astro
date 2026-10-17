@@ -1,11 +1,12 @@
 ---
 import { env } from "cloudflare:workers";
-import { PencilIcon } from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/24/outline";
 import Layout from "../../layouts/Layout.astro";
 import Button from "../../ui/button.astro";
 import Breadcrumbs from "../../ui/breadcrumbs.astro";
 import LibrarySkillRow from "../../ui/library-skill-row.astro";
 import { DeleteCollectionButton } from "../../ui/delete-collection-button";
+import { EditCollectionButton } from "../../ui/edit-collection-button";
 import { getAuth, getPageSession } from "../../lib/auth";
 import { safeReturnTo } from "../../lib/auth-config";
 import { createLibraryStore } from "../../lib/library-store";
@@ -34,8 +35,6 @@ const collection = isCollectionSlug(slug)
 if (!collection) Astro.response.status = 404;
 
 const skills = (collection?.skillPaths ?? []).map(toLibrarySkill);
-const fieldClass =
-  "type-body-md text-content-primary placeholder:text-content-muted w-full rounded-lg bg-surface-default px-3 py-2 ring-1 ring-line-default outline-none focus-visible:ring-2 focus-visible:ring-content-primary";
 ---
 
 <Layout
@@ -50,7 +49,6 @@ const fieldClass =
     <div class="flex flex-col gap-10">
       <Breadcrumbs
         items={[
-          { label: "Explore", href: "/" },
           { label: "Library", href: "/library" },
           { label: collection?.title ?? "Collection" },
         ]}
@@ -58,7 +56,7 @@ const fieldClass =
       {
         collection ? (
           <>
-            <div class="flex items-start justify-between gap-4">
+            <div class="flex items-center justify-between gap-4">
               <div class="flex min-w-0 flex-col gap-2">
                 <h1 class="type-h1 text-content-primary text-balance">
                   {collection.title}
@@ -70,73 +68,17 @@ const fieldClass =
                 ) : null}
               </div>
               <div class="flex shrink-0 items-center gap-1">
-                <button
-                  type="button"
-                  aria-label="Edit collection"
-                  aria-expanded="false"
-                  aria-controls="edit-collection"
-                  data-disclosure
-                  class="text-content-secondary hover:bg-fill-strong hover:text-content-primary focus-visible:outline-content-primary inline-flex size-7 cursor-pointer items-center justify-center rounded-lg outline-none focus-visible:outline-1 focus-visible:outline-offset-2"
-                >
-                  <PencilIcon className="size-4" aria-hidden="true" />
-                </button>
+                <EditCollectionButton
+                  client:load
+                  collectionId={collection.id}
+                  title={collection.title}
+                />
                 <DeleteCollectionButton
                   client:load
                   collectionId={collection.id}
                   title={collection.title}
                 />
               </div>
-            </div>
-
-            <div id="edit-collection" class="flex flex-col gap-6" hidden>
-              <form
-                class="border-line-default bg-surface-default flex max-w-lg flex-col gap-3 rounded-lg border p-4"
-                data-update-collection
-                data-collection-id={collection.id}
-                aria-describedby="library-error"
-              >
-                <div class="flex flex-col gap-1">
-                  <label
-                    for="collection-title"
-                    class="type-body-md text-content-secondary"
-                  >
-                    Title
-                  </label>
-                  <input
-                    id="collection-title"
-                    name="title"
-                    required
-                    maxlength="80"
-                    value={collection.title}
-                    autocomplete="off"
-                    class={fieldClass}
-                  />
-                </div>
-                <div class="flex flex-col gap-1">
-                  <label
-                    for="collection-description"
-                    class="type-body-md text-content-secondary"
-                  >
-                    Description
-                  </label>
-                  <textarea
-                    id="collection-description"
-                    name="description"
-                    maxlength="240"
-                    rows="3"
-                    class={fieldClass}
-                    set:text={collection.description}
-                  />
-                </div>
-                <div class="flex items-center gap-2">
-                  <Button type="submit" variant="primary">
-                    Save
-                  </Button>
-                  <Button variant="ghost" data-disclosure-close>
-                    Cancel
-                  </Button>
-                </div>
-              </form>
             </div>
 
             <p
@@ -159,14 +101,21 @@ const fieldClass =
                   ))}
                 </div>
               ) : (
-                <div class="flex flex-col items-start gap-3">
-                  <p class="type-body-md text-content-secondary text-pretty">
-                    Star a skill and pick this collection to add it here.
-                  </p>
-                  <Button href="/skills" variant="secondary">
-                    Browse skills
-                  </Button>
-                </div>
+                <a
+                  href="/skills"
+                  class="group focus-visible:outline-content-primary flex flex-col items-center gap-5 py-8 outline-none focus-visible:outline-1 focus-visible:outline-offset-4"
+                >
+                  <span class="flex items-center justify-center -space-x-10">
+                    <span class="border-line-default bg-fill-subtle h-20 w-16 -rotate-6 rounded-lg border border-dashed motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover:-translate-x-1 motion-safe:group-hover:-rotate-8"></span>
+                    <span class="border-line-default bg-surface-default text-content-muted relative z-10 flex h-24 w-16 items-center justify-center rounded-lg border border-dashed motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover:-translate-y-1">
+                      <PlusIcon className="size-5" aria-hidden="true" />
+                    </span>
+                    <span class="border-line-default bg-fill-subtle h-20 w-16 rotate-6 rounded-lg border border-dashed motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover:translate-x-1 motion-safe:group-hover:rotate-8"></span>
+                  </span>
+                  <span class="type-body-md text-content-secondary">
+                    Add a skill
+                  </span>
+                </a>
               )}
             </div>
           </>

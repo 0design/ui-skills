@@ -2,7 +2,6 @@
 import { env } from "cloudflare:workers";
 import Layout from "../../layouts/Layout.astro";
 import Button from "../../ui/button.astro";
-import Breadcrumbs from "../../ui/breadcrumbs.astro";
 import LibraryCollectionCard from "../../ui/library-collection-card.astro";
 import LibrarySkillRow from "../../ui/library-skill-row.astro";
 import { CreateCollectionButton } from "../../ui/create-collection-button";
@@ -38,10 +37,10 @@ const savedSkills = library.savedSkillPaths.map(toLibrarySkill);
 >
   <div class="container-3xl pt-20 pb-10">
     <div class="flex flex-col gap-10">
-      <Breadcrumbs
-        items={[{ label: "Account", href: "/account" }, { label: "Library" }]}
-      />
-      <h1 class="type-h1 text-content-primary text-balance">Library</h1>
+      <div class="flex items-center justify-between gap-4">
+        <h1 class="type-h1 text-content-primary text-balance">Library</h1>
+        <CreateCollectionButton client:idle />
+      </div>
 
       <p
         id="library-error"
@@ -52,65 +51,46 @@ const savedSkills = library.savedSkillPaths.map(toLibrarySkill);
       >
       </p>
 
-      <section class="flex flex-col gap-4" aria-labelledby="saved-skills-title">
-        <h2
-          id="saved-skills-title"
-          class="text-content-primary text-lg font-medium tracking-tight"
-        >
-          Saved skills
-        </h2>
-        {
-          savedSkills.length > 0 ? (
-            <div class="flex flex-col">
-              {savedSkills.map((skill) => (
-                <LibrarySkillRow
-                  skill={skill}
-                  label={`Remove ${skill.name} from saved skills`}
-                />
-              ))}
-            </div>
-          ) : (
-            <div class="flex flex-col items-start gap-3">
-              <p class="type-body-md text-content-secondary text-pretty">
-                Star a skill to save it here.
-              </p>
-              <Button href="/skills" variant="secondary">
-                Browse skills
-              </Button>
-            </div>
-          )
-        }
-      </section>
+      {
+        library.collections.length > 0 ? (
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            {library.collections.map((collection) => (
+              <LibraryCollectionCard
+                href={`/library/${collection.slug}`}
+                title={collection.title}
+                collectionId={collection.id}
+                skillPaths={collection.skillPaths}
+              />
+            ))}
+          </div>
+        ) : (
+          <p class="type-body-md text-content-secondary text-pretty">
+            Group skills for a project or a review.
+          </p>
+        )
+      }
 
-      <section class="flex flex-col gap-4" aria-labelledby="collections-title">
-        <div class="flex items-center justify-between gap-4">
-          <h2
-            id="collections-title"
-            class="text-content-primary text-lg font-medium tracking-tight"
-          >
-            Collections
-          </h2>
-          <CreateCollectionButton client:idle />
-        </div>
-        {
-          library.collections.length > 0 ? (
-            <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              {library.collections.map((collection) => (
-                <LibraryCollectionCard
-                  href={`/library/${collection.slug}`}
-                  title={collection.title}
-                  collectionId={collection.id}
-                  skillPaths={collection.skillPaths}
-                />
-              ))}
-            </div>
-          ) : (
+      {
+        savedSkills.length > 0 ? (
+          <div class="flex flex-col">
+            {savedSkills.map((skill) => (
+              <LibrarySkillRow
+                skill={skill}
+                label={`Remove ${skill.name} from saved skills`}
+              />
+            ))}
+          </div>
+        ) : (
+          <div class="flex flex-col items-start gap-3">
             <p class="type-body-md text-content-secondary text-pretty">
-              Group skills for a project or a review.
+              Star a skill to save it here.
             </p>
-          )
-        }
-      </section>
+            <Button href="/skills" variant="secondary">
+              Browse skills
+            </Button>
+          </div>
+        )
+      }
     </div>
   </div>
 </Layout>
